@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Aula Fuso Horário",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "C:\\Users\\User\\OneDrive\\Desktop\\Curso\\server.bat"],
+      "port": 8080,
+      "autoPort": true
+    }
+  ]
+}

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Provas Anteriores — O Reizinho do PAES</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .provas-hero {
+      background: var(--navy);
+      padding: 3rem 0 2rem;
+      border-bottom: 4px solid var(--gold);
+    }
+    .provas-hero h1 { color: var(--gold); font-size: 2rem; font-weight: 900; }
+    .provas-hero p  { color: var(--gray); margin-top: 0.5rem; }
+
+    /* ── Filtros ── */
+    .filtros {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin: 2rem 0 1.5rem;
+    }
+    .filtro-btn {
+      padding: 0.4rem 1rem;
+      border-radius: 50px;
+      border: 2px solid #D0D8E4;
+      background: #fff;
+      color: var(--navy);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filtro-btn:hover, .filtro-btn.ativo {
+      background: var(--navy);
+      color: var(--gold);
+      border-color: var(--navy);
+    }
+
+    /* ── Grid de provas ── */
+    .provas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .prova-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform 0.2s;
+    }
+    .prova-card:hover { transform: translateY(-4px); }
+
+    .prova-card-header {
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .prova-ano {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #fff;
+    }
+    .prova-badges { display: flex; flex-direction: column; gap: 0.3rem; align-items: flex-end; }
+
+    .prova-card-body { padding: 1.2rem 1.5rem; }
+    .prova-info {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.82rem;
+      color: var(--gray);
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .prova-info span { display: flex; align-items: center; gap: 0.3rem; }
+
+    .prova-recursos {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .recurso-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.55rem 1rem;
+      border-radius: 7px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.15s;
+      cursor: pointer;
+      border: none;
+      width: 100%;
+      text-align: left;
+    }
+    .recurso-caderno   { background: #EEF4FF; color: var(--blue); }
+    .recurso-gabarito  { background: #E6F9EF; color: var(--green); }
+    .recurso-resolucao { background: #FFF8DC; color: #856400; }
+    .recurso-btn:hover { filter: brightness(0.95); transform: translateX(3px); }
+    .recurso-btn .rec-icon { font-size: 1rem; }
+
+    /* ── Destaque da última prova ── */
+    .ultima-prova {
+      background: var(--navy);
+      border-radius: 14px;
+      padding: 2rem;
+      margin-bottom: 2.5rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 2rem;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
+    .ultima-prova h2 { color: var(--gold); font-size: 1.5rem; font-weight: 900; }
+    .ultima-prova p  { color: var(--gray); font-size: 0.9rem; margin-top: 0.4rem; line-height: 1.6; }
+    .ultima-prova-ano { font-size: 5rem; font-weight: 900; color: var(--gold); line-height: 1; opacity: 0.4; }
+
+    /* ── Info PAES ── */
+    .paes-info-box {
+      background: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+    }
+    .paes-info-box h3 { color: var(--navy); font-weight: 900; margin-bottom: 1rem; }
+    .distribuicao-table { width: 100%; }
+    .distribuicao-table td { padding: 0.5rem 0.8rem; font-size: 0.88rem; }
+    .distribuicao-table tr:nth-child(odd) td { background: #F8FAFC; }
+    .dist-cor { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+    @media (max-width: 768px) {
+      .ultima-prova { grid-template-columns: 1fr; }
+      .ultima-prova-ano { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="index.html" class="navbar-brand"><span class="crown">♛</span> O Reizinho do PAES</a>
+  <button class="hamburger" onclick="document.querySelector('.navbar-nav').classList.toggle('open')">☰</button>
+  <ul class="navbar-nav">
+    <li><a href="index.html">Início</a></li>
+    <li><a href="simulado.html">Simulados</a></li>
+    <li><a href="provas.html" class="active">Provas Anteriores</a></li>
+    <li><a href="assuntos.html">Assuntos</a></li>
+    <li><a href="simulado.html" class="btn btn-gold btn-sm">Fazer Simulado</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="provas-hero">
+  <div class="container">
+    <span class="badge badge-gold" style="margin-bottom:0.8rem;display:inline-block">PAES UEMA</span>
+    <h1>📂 Provas Anteriores</h1>
+    <p>Cadernos de questões, gabaritos oficiais e resoluções comentadas — PAES 2015 a 2024</p>
+  </div>
+</div>
+
+<div class="container section-sm">
+
+  <!-- Destaque última prova -->
+  <div class="ultima-prova">
+    <div>
+      <span class="badge badge-gold" style="margin-bottom:0.5rem;display:inline-block">MAIS RECENTE</span>
+      <h2>PAES UEMA 2024</h2>
+      <p>A prova mais recente do PAES UEMA com 60 questões distribuídas em 4 áreas do conhecimento. Gabarito oficial disponível com resolução comentada questão por questão.</p>
+      <div style="display:flex;gap:0.8rem;flex-wrap:wrap;margin-top:1.2rem">
+        <button class="btn btn-gold" onclick="abrirModal('2024')">📄 Ver Caderno</button>
+        <button class="btn btn-navy" onclick="abrirModal('2024','gabarito')">✔ Ver Gabarito</button>
+      </div>
+    </div>
+    <div class="ultima-prova-ano">2024</div>
+  </div>
+
+  <!-- Distribuição de questões -->
+  <div class="paes-info-box">
+    <h3>📊 Distribuição das 60 Questões por Área</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem">
+      ${[
+        {area:'Linguagens e Códigos', qtd:15, cor:'#1565C0', disc:'Português, Literatura, Inglês, Arte'},
+        {area:'Ciências Humanas',     qtd:15, cor:'#6C3483', disc:'História, Geografia, Filosofia, Sociologia'},
+        {area:'Ciências da Natureza', qtd:15, cor:'#27AE60', disc:'Biologia, Química, Física'},
+        {area:'Matemática',           qtd:15, cor:'#C0392B', disc:'Todas as subáreas da Matemática'}
+      ].map(a => `
+        <div style="display:flex;align-items:flex-start;gap:0.8rem">
+          <div style="background:${a.cor};color:#fff;border-radius:8px;padding:0.5rem 0.8rem;text-align:center;min-width:52px">
+            <div style="font-size:1.5rem;font-weight:900;line-height:1">${a.qtd}</div>
+            <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.5px">questões</div>
+          </div>
+          <div>
+            <div style="font-weight:700;font-size:0.9rem;color:${a.cor}">${a.area}</div>
+            <div style="font-size:0.8rem;color:var(--gray);margin-top:0.2rem">${a.disc}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filtros">
+    <button class="filtro-btn ativo" onclick="filtrar('todos',this)">Todos os anos</button>
+    <button class="filtro-btn" onclick="filtrar('recente',this)">Mais recentes (2021–2024)</button>
+    <button class="filtro-btn" onclick="filtrar('medio',this)">2018–2020</button>
+    <button class="filtro-btn" onclick="filtrar('antigo',this)">2015–2017</button>
+  </div>
+
+  <!-- Grid de provas -->
+  <div class="provas-grid" id="provas-grid"></div>
+
+</div>
+
+<!-- Modal de prova -->
+<div id="modal-prova" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:14px;padding:2rem;max-width:550px;width:90%;max-height:85vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,0.4)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+      <h2 id="modal-titulo" style="color:var(--navy);font-size:1.3rem"></h2>
+      <button onclick="document.getElementById('modal-prova').style.display='none'"
+        style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--gray)">✕</button>
+    </div>
+    <div id="modal-corpo"></div>
+  </div>
+</div>
+
+<!-- BOTÃO WHATSAPP FLUTUANTE -->
+<div class="wpp-float">
+  <span class="wpp-label">💬 Mentoria PAES</span>
+  <a class="wpp-float-btn" href="https://wa.me/5598983025879?text=Olá%20Thiago!%20Quero%20saber%20mais%20sobre%20a%20Mentoria%20PAES%20UEMA%20🎯" target="_blank" rel="noopener">
+    <span class="wpp-icon">📱</span> Falar com Thiago
+  </a>
+</div>
+
+<footer>
+  <div class="container">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;align-items:center">
+      <div class="footer-brand">♛ O Reizinho do PAES</div>
+      <div class="footer-links">
+        <a href="simulado.html">Simulado</a>
+        <a href="resultado.html">Resultado</a>
+        <a href="assuntos.html">Assuntos</a>
+      </div>
+    </div>
+    <div class="footer-wpp">
+      <div class="footer-wpp-texto">
+        <strong>📱 Mentoria Particular com Thiago Tiers</strong>
+        <span>Quer acelerar sua aprovação? Fale direto no WhatsApp!</span>
+      </div>
+      <a class="footer-wpp-btn" href="https://wa.me/5598983025879?text=Olá%20Thiago!%20Quero%20saber%20mais%20sobre%20a%20Mentoria%20PAES%20UEMA%20🎯" target="_blank" rel="noopener">
+        💬 (98) 98302-5879
+      </a>
+    </div>
+    <div class="footer-bottom">♛ Thiago Tiers — O Reizinho do PAES UEMA</div>
+  </div>
+</footer>
+
+<script>
+const PROVAS = [
+  { ano:2024, cor:'#C0392B', questoes:60, novidade:'Novo formato', materias:'Linguagens, C.Humanas, C.Natureza, Matemática', destaque:true },
+  { ano:2023, cor:'#1565C0', questoes:60, novidade:'', materias:'Linguagens, C.Humanas, C.Natureza, Matemática' },
+  { ano:2022, cor:'#27AE60', questoes:60, novidade:'', materias:'Linguagens, C.Humanas, C.Natureza, Matemática' },
+  { ano:2021, cor:'#6C3483', questoes:60, novidade:'Aplicado online', materias:'Linguagens, C.Humanas, C.Natureza, Matemática' },
+  { ano:2020, cor:'#E67E22', questoes:60, novidade:'', materias:'Linguagens, C.Humanas, C.Natureza, Matemática' },
+  { ano:2019, cor:'#0D1B2A', questoes:60, novidade:'', materias:'Linguagens, C.Humanas, C.Natureza, Matemática' },
+  { ano:2018, cor:'#1565C0', questoes:60, novidade:'', materias:'Linguagens, C.Humanas, C.Natureza, Matemática' },
+  { ano:2017, cor:'#27AE60', questoes:60, novidade:'', materias:'Linguagens, C.Humanas, C.Natureza, Matemática' },
+  { ano:2016, cor:'#6C3483', questoes:60, novidade:'', materias:'Linguagens, C.Humanas, C.Natureza, Matemática' },
+  { ano:2015, cor:'#E67E22', questoes:60, novidade:'', materias:'Linguagens, C.Humanas, C.Natureza, Matemática' },
+];
+
+let filtroAtual = 'todos';
+
+function renderProvas(filtro) {
+  const grid = document.getElementById('provas-grid');
+  let lista = PROVAS;
+  if (filtro === 'recente') lista = PROVAS.filter(p => p.ano >= 2021);
+  if (filtro === 'medio')   lista = PROVAS.filter(p => p.ano >= 2018 && p.ano <= 2020);
+  if (filtro === 'antigo')  lista = PROVAS.filter(p => p.ano <= 2017);
+
+  grid.innerHTML = lista.map(p => `
+    <div class="prova-card">
+      <div class="prova-card-header" style="background:${p.cor}">
+        <span class="prova-ano">${p.ano}</span>
+        <div class="prova-badges">
+          <span class="badge" style="background:rgba(255,255,255,0.2);color:#fff;font-size:0.7rem">PAES UEMA</span>
+          ${p.novidade ? `<span class="badge" style="background:var(--gold);color:var(--navy);font-size:0.7rem">${p.novidade}</span>` : ''}
+        </div>
+      </div>
+      <div class="prova-card-body">
+        <div class="prova-info">
+          <span>📝 ${p.questoes} questões</span>
+          <span>⏱ 2h30min</span>
+        </div>
+        <div style="font-size:0.8rem;color:var(--gray);margin-bottom:1rem">${p.materias}</div>
+        <div class="prova-recursos">
+          <button class="recurso-btn recurso-caderno" onclick="abrirModal(${p.ano},'caderno')">
+            <span class="rec-icon">📄</span> Caderno de Questões
+          </button>
+          <button class="recurso-btn recurso-gabarito" onclick="abrirModal(${p.ano},'gabarito')">
+            <span class="rec-icon">✔</span> Gabarito Oficial
+          </button>
+          <button class="recurso-btn recurso-resolucao" onclick="abrirModal(${p.ano},'resolucao')">
+            <span class="rec-icon">💡</span> Resolução Comentada
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filtrar(tipo, btn) {
+  filtroAtual = tipo;
+  document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('ativo'));
+  btn.classList.add('ativo');
+  renderProvas(tipo);
+}
+
+function abrirModal(ano, tipo = 'caderno') {
+  const nomes = { caderno:'Caderno de Questões', gabarito:'Gabarito Oficial', resolucao:'Resolução Comentada' };
+  document.getElementById('modal-titulo').textContent = `PAES ${ano} — ${nomes[tipo]}`;
+
+  const gabaritos = {
+    2024: {1:'C',2:'C',3:'C',4:'A',5:'B',6:'C',7:'B',8:'D',9:'B',10:'B',11:'C',12:'B',13:'C',14:'B',15:'C',16:'B',17:'B',18:'C',19:'B',20:'B',21:'C',22:'A',23:'C',24:'A',25:'B',26:'B',27:'C',28:'C',29:'B',30:'C',31:'C',32:'C',33:'A',34:'B',35:'B',36:'B',37:'C',38:'B',39:'B',40:'B',41:'C',42:'C',43:'C',44:'C',45:'C',46:'A',47:'B',48:'A',49:'C',50:'C',51:'B',52:'C',53:'C',54:'A',55:'A',56:'B',57:'B',58:'B',59:'C',60:'C'},
+  };
+
+  let html = '';
+  if (tipo === 'gabarito') {
+    const gab = gabaritos[ano] || {};
+    html = `
+      <div style="margin-bottom:1rem">
+        <div class="alert alert-gold"><strong>⚠️ Atenção:</strong> Gabarito de referência para estudo. Consulte sempre o gabarito oficial da UEMA.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+        ${Array.from({length:60},(_,i) => {
+          const q = i+1;
+          const r = gab[q] || '–';
+          return `<div style="background:#F8FAFC;border:1px solid #E0E6EF;border-radius:6px;padding:0.4rem;text-align:center;font-size:0.82rem">
+            <span style="color:var(--gray);font-size:0.7rem;display:block">${q}</span>
+            <span style="font-weight:900;color:var(--navy);font-size:1rem">${r}</span>
+          </div>`;
+        }).join('')}
+      </div>`;
+  } else if (tipo === 'caderno') {
+    html = `
+      <div class="alert alert-blue">
+        <strong>📄 Caderno PAES ${ano}</strong><br>
+        O caderno de questões do PAES ${ano} está disponível para download no site oficial da UEMA ou via link abaixo.
+      </div>
+      <div style="background:#F8FAFC;border-radius:8px;padding:1.5rem;text-align:center;border:2px dashed #D0D8E4;margin-top:1rem">
+        <div style="font-size:2rem;margin-bottom:0.5rem">📂</div>
+        <p style="color:var(--gray);font-size:0.9rem;margin-bottom:1rem">Caderno de Questões PAES ${ano}<br>60 questões — 4 áreas do conhecimento</p>
+        <a href="https://www.uema.br/paes" target="_blank" class="btn btn-navy" style="display:inline-flex">
+          🔗 Acessar no site da UEMA
+        </a>
+      </div>
+      <p style="font-size:0.8rem;color:var(--gray);margin-top:1rem;text-align:center">
+        Você também pode praticar com nosso <a href="simulado.html" style="color:var(--blue)">Simulado Online</a> com questões no estilo PAES.
+      </p>`;
+  } else {
+    html = `
+      <div class="alert alert-green">
+        <strong>💡 Resolução Comentada PAES ${ano}</strong><br>
+        Resoluções detalhadas com justificativa de cada alternativa.
+      </div>
+      <div style="background:#F8FAFC;border-radius:8px;padding:1.5rem;text-align:center;border:2px dashed #D0D8E4;margin:1rem 0">
+        <div style="font-size:2rem;margin-bottom:0.5rem">📚</div>
+        <p style="color:var(--gray);font-size:0.9rem;margin-bottom:1rem">Resolução comentada com explicação de cada questão do PAES ${ano}.</p>
+        <a href="https://www.uema.br/paes" target="_blank" class="btn btn-green" style="display:inline-flex">
+          🔗 Acessar Resoluções
+        </a>
+      </div>
+      <div class="alert alert-gold" style="margin-top:0.5rem">
+        💡 Dica: Após realizar o nosso <a href="simulado.html" style="color:var(--navy);font-weight:700">simulado</a>, você recebe a resolução comentada de todas as 60 questões automaticamente!
+      </div>`;
+  }
+
+  document.getElementById('modal-corpo').innerHTML = html;
+  document.getElementById('modal-prova').style.display = 'flex';
+}
+
+// Fechar modal ao clicar fora
+document.getElementById('modal-prova').addEventListener('click', function(e) {
+  if (e.target === this) this.style.display = 'none';
+});
+
+renderProvas('todos');
+</script>
+</body>
+</html>

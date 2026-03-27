@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assuntos que Mais Caem — O Reizinho do PAES</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .assuntos-hero { background:var(--navy); padding:3rem 0 2rem; border-bottom:4px solid var(--gold); }
+    .assuntos-hero h1 { color:var(--gold); font-size:2rem; font-weight:900; }
+    .assuntos-hero p  { color:var(--gray); margin-top:0.5rem; }
+
+    .area-tabs { display:flex; gap:0; border-bottom:3px solid #E0E6EF; margin-bottom:2rem; overflow-x:auto; scrollbar-width:none; }
+    .area-tabs::-webkit-scrollbar { display:none; }
+    .area-tab { padding:0.9rem 1.5rem; font-size:0.88rem; font-weight:700; cursor:pointer; border:none; background:none; color:var(--gray); border-bottom:3px solid transparent; margin-bottom:-3px; white-space:nowrap; transition:all 0.15s; }
+    .area-tab:hover { color:var(--navy); }
+    .area-tab.ativa { color:var(--navy); border-bottom-color:var(--gold); }
+
+    .area-panel { display:none; }
+    .area-panel.ativo { display:block; }
+
+    .area-panel-header { border-radius:12px; padding:1.5rem 2rem; color:#fff; margin-bottom:2rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; }
+    .area-panel-header h2 { font-size:1.4rem; font-weight:900; }
+    .area-panel-header p  { font-size:0.9rem; opacity:0.85; margin-top:0.3rem; }
+    .area-questoes-badge { background:rgba(255,255,255,0.2); border-radius:10px; padding:0.8rem 1.5rem; text-align:center; }
+    .area-questoes-badge .num { font-size:2.5rem; font-weight:900; display:block; }
+    .area-questoes-badge .lab { font-size:0.75rem; opacity:0.8; }
+
+    .disciplinas-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1.5rem; }
+
+    .disciplina-card { background:#fff; border-radius:12px; box-shadow:var(--shadow); overflow:hidden; }
+    .disc-header { padding:0.9rem 1.2rem; display:flex; align-items:center; justify-content:space-between; color:#fff; }
+    .disc-header-left { display:flex; align-items:center; gap:0.7rem; }
+    .disc-icon { font-size:1.3rem; }
+    .disc-nome { font-size:0.95rem; font-weight:900; }
+    .disc-qtd  { font-size:0.78rem; opacity:0.85; }
+    .disc-badge-qtd { background:rgba(255,255,255,0.25); border-radius:50px; padding:0.2rem 0.7rem; font-size:0.8rem; font-weight:700; }
+    .disc-body { padding:1rem 1.2rem; }
+
+    .assunto-item { display:flex; align-items:center; gap:0.8rem; padding:0.55rem 0; border-bottom:1px solid #F0F3F8; }
+    .assunto-item:last-child { border-bottom:none; }
+    .assunto-peso { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:900; flex-shrink:0; }
+    .peso-alto  { background:#FDE8E8; color:var(--red); }
+    .peso-medio { background:#FFF8DC; color:#856400; }
+    .peso-baixo { background:#E6F9EF; color:var(--green); }
+    .assunto-nome { font-size:0.9rem; color:var(--navy); font-weight:600; flex:1; }
+    .assunto-sub  { font-size:0.78rem; color:var(--gray); font-weight:400; }
+
+    .dica-card { background:#fff; border-radius:10px; padding:1.2rem 1.5rem; box-shadow:var(--shadow); border-left:4px solid var(--gold); margin-top:1.5rem; }
+    .dica-card h4 { font-size:0.95rem; color:var(--navy); font-weight:900; margin-bottom:0.6rem; }
+    .dica-card ul { list-style:none; }
+    .dica-card ul li { font-size:0.88rem; color:var(--gray); padding:0.25rem 0; }
+    .dica-card ul li::before { content:"✦ "; color:var(--gold2); }
+
+    .legenda-peso { display:flex; gap:1rem; align-items:center; background:#fff; border-radius:8px; padding:0.8rem 1.2rem; box-shadow:var(--shadow); margin-bottom:1.5rem; font-size:0.82rem; flex-wrap:wrap; }
+    .legenda-peso span { display:flex; align-items:center; gap:0.4rem; font-weight:600; }
+
+    @media (max-width:600px) {
+      .area-tab { padding:0.7rem 1rem; font-size:0.8rem; }
+      .disciplinas-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="index.html" class="navbar-brand"><span class="crown">♛</span> O Reizinho do PAES</a>
+  <button class="hamburger" onclick="document.querySelector('.navbar-nav').classList.toggle('open')">☰</button>
+  <ul class="navbar-nav">
+    <li><a href="index.html">Início</a></li>
+    <li><a href="simulado.html">Simulados</a></li>
+    <li><a href="provas.html">Provas Anteriores</a></li>
+    <li><a href="assuntos.html" class="active">Assuntos</a></li>
+    <li><a href="simulado.html" class="btn btn-gold btn-sm">Fazer Simulado</a></li>
+  </ul>
+</nav>
+
+<div class="assuntos-hero">
+  <div class="container">
+    <span class="badge badge-gold" style="margin-bottom:0.8rem;display:inline-block">PAES UEMA</span>
+    <h1>📖 Assuntos que Mais Caem</h1>
+    <p>Análise baseada nas provas de 2015 a 2024 — foque no que realmente importa!</p>
+  </div>
+</div>
+
+<div class="container section-sm">
+
+  <div class="legenda-peso">
+    <strong style="color:var(--navy)">Frequência:</strong>
+    <span><span class="assunto-peso peso-alto" style="width:auto;height:auto;padding:0.15rem 0.5rem;border-radius:4px">ALTA</span> Cai todo ano</span>
+    <span><span class="assunto-peso peso-medio" style="width:auto;height:auto;padding:0.15rem 0.5rem;border-radius:4px">MÉD</span> Cai com frequência</span>
+    <span><span class="assunto-peso peso-baixo" style="width:auto;height:auto;padding:0.15rem 0.5rem;border-radius:4px">BAI</span> Aparece ocasionalmente</span>
+  </div>
+
+  <div class="area-tabs">
+    <button class="area-tab ativa" onclick="mostrarArea('linguagens',this)">📝 Linguagens e Códigos</button>
+    <button class="area-tab" onclick="mostrarArea('humanas',this)">🌍 Ciências Humanas</button>
+    <button class="area-tab" onclick="mostrarArea('natureza',this)">🔬 Ciências da Natureza</button>
+    <button class="area-tab" onclick="mostrarArea('matematica',this)">📐 Matemática</button>
+  </div>
+
+  <!-- ===== LINGUAGENS ===== -->
+  <div class="area-panel ativo" id="panel-linguagens">
+    <div class="area-panel-header" style="background:var(--blue)">
+      <div><h2>📝 Linguagens e Códigos</h2><p>Língua Portuguesa · Literatura · Língua Inglesa · Arte</p></div>
+      <div class="area-questoes-badge"><span class="num">15</span><span class="lab">questões</span></div>
+    </div>
+    <div class="disciplinas-grid">
+
+      <!-- Língua Portuguesa -->
+      <div class="disciplina-card">
+        <div class="disc-header" style="background:#1565C0">
+          <div class="disc-header-left">
+            <span class="disc-icon">✍️</span>
+            <div><div class="disc-nome">Língua Portuguesa</div><div class="disc-qtd">~8–10 questões</div></div>
+          </div>
+          <span class="disc-badge-qtd">Principal</span>
+        </div>
+        <div class="disc-body">
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Interpretação de Texto</div><div class="assunto-sub">Compreensão, inferência, coerência</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Figuras de Linguagem</div><div class="assunto-sub">Metáfora, personificação, ironia, hipérbole</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Concordância Verbal e Nominal</div><div class="assunto-sub">Sujeito simples, composto, coletivos</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Crase</div><div class="assunto-sub">Uso obrigatório, facultativo e proibido</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Regência Verbal</div><div class="assunto-sub">Verbos transitivos diretos e indiretos</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Pontuação</div><div class="assunto-sub">Vírgula, ponto e vírgula, dois-pontos</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Classes Gramaticais</div><div class="assunto-sub">Pronomes, conjunções, preposições</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Coesão e Coerência Textual</div><div class="assunto-sub">Conectivos, progressão temática</div></div></div>
+        </div>
+      </div>
+
+      <!-- Literatura -->
+      <div class="disciplina-card">
+        <div class="disc-header" style="background:#2471A3">
+          <div class="disc-header-left">
+            <span class="disc-icon">📚</span>
+            <div><div class="disc-nome">Literatura</div><div class="disc-qtd">~3–4 questões</div></div>
+          </div>
+        </div>
+        <div class="disc-body">
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Modernismo Brasileiro</div><div class="assunto-sub">Semana de 22, geração de 30 e 45</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Romantismo</div><div class="assunto-sub">Gonçalves Dias, José de Alencar</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Realismo e Naturalismo</div><div class="assunto-sub">Machado de Assis, Aluísio Azevedo</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Literatura Maranhense</div><div class="assunto-sub">Gonçalves Dias, Josué Montello</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-baixo">BAI</div><div style="flex:1"><div class="assunto-nome">Parnasianismo e Simbolismo</div><div class="assunto-sub">Olavo Bilac, Cruz e Sousa</div></div></div>
+        </div>
+      </div>
+
+      <!-- Inglês -->
+      <div class="disciplina-card">
+        <div class="disc-header" style="background:#1A5276">
+          <div class="disc-header-left">
+            <span class="disc-icon">🇬🇧</span>
+            <div><div class="disc-nome">Língua Inglesa</div><div class="disc-qtd">~3 questões</div></div>
+          </div>
+        </div>
+        <div class="disc-body">
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Compreensão Leitora</div><div class="assunto-sub">Interpretação de textos em inglês</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Falsos Cognatos</div><div class="assunto-sub">Actually, eventually, pretend...</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Tempos Verbais</div><div class="assunto-sub">Simple Present, Past, Future</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Vocabulário em Contexto</div><div class="assunto-sub">Dedução de sentido pelo contexto</div></div></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="dica-card">
+      <h4>💡 Dicas para Linguagens e Códigos</h4>
+      <ul>
+        <li>Leia textos diariamente — jornais, revistas e literatura clássica brasileira</li>
+        <li>Pratique interpretação de texto sempre — é a maior fatia da prova</li>
+        <li>Memorize as regras de crase e concordância com exercícios</li>
+        <li>Para inglês, foque em leitura e vocabulário contextual — não precisa falar</li>
+        <li>Estude os movimentos literários em ordem cronológica com autores e obras</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== CIÊNCIAS HUMANAS ===== -->
+  <div class="area-panel" id="panel-humanas">
+    <div class="area-panel-header" style="background:var(--purple)">
+      <div><h2>🌍 Ciências Humanas</h2><p>História · Geografia · Filosofia · Sociologia</p></div>
+      <div class="area-questoes-badge"><span class="num">15</span><span class="lab">questões</span></div>
+    </div>
+    <div class="disciplinas-grid">
+
+      <!-- História -->
+      <div class="disciplina-card">
+        <div class="disc-header" style="background:#6C3483">
+          <div class="disc-header-left">
+            <span class="disc-icon">🏛️</span>
+            <div><div class="disc-nome">História</div><div class="disc-qtd">~5–6 questões</div></div>
+          </div>
+        </div>
+        <div class="disc-body">
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Brasil República e Era Vargas</div><div class="assunto-sub">República Velha, 1930, Estado Novo</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Ditadura Militar (1964–1985)</div><div class="assunto-sub">AI-5, abertura política, redemocratização</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Colonização do Brasil</div><div class="assunto-sub">Maranhão, ciclos econômicos, escravidão</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Segunda Guerra Mundial</div><div class="assunto-sub">Causas, frentes de batalha, consequências</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Abolição da Escravidão</div><div class="assunto-sub">Lei Áurea, 13 de maio de 1888</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Proclamação da República</div><div class="assunto-sub">15 de novembro de 1889, causas</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-baixo">BAI</div><div style="flex:1"><div class="assunto-nome">Guerra Fria</div><div class="assunto-sub">EUA x URSS, corrida armamentista</div></div></div>
+        </div>
+      </div>
+
+      <!-- Geografia -->
+      <div class="disciplina-card">
+        <div class="disc-header" style="background:#7D3C98">
+          <div class="disc-header-left">
+            <span class="disc-icon">🗺️</span>
+            <div><div class="disc-nome">Geografia</div><div class="disc-qtd">~5 questões</div></div>
+          </div>
+        </div>
+        <div class="disc-body">
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Biomas Brasileiros</div><div class="assunto-sub">Amazônia, Cerrado, Caatinga, Maranhão</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Maranhão — Aspectos Físicos</div><div class="assunto-sub">Lençóis Maranhenses, Delta do Parnaíba</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Urbanização Brasileira</div><div class="assunto-sub">Êxodo rural, megalópoles, favelização</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Globalização</div><div class="assunto-sub">Impactos econômicos, culturais e ambientais</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Hidrografia Brasileira</div><div class="assunto-sub">Bacias hidrográficas, rios principais</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-baixo">BAI</div><div style="flex:1"><div class="assunto-nome">Geopolítica Mundial</div><div class="assunto-sub">Blocos econômicos, conflitos regionais</div></div></div>
+        </div>
+      </div>
+
+      <!-- Filosofia e Sociologia -->
+      <div class="disciplina-card">
+        <div class="disc-header" style="background:#5B2C6F">
+          <div class="disc-header-left">
+            <span class="disc-icon">💭</span>
+            <div><div class="disc-nome">Filosofia e Sociologia</div><div class="disc-qtd">~3–4 questões</div></div>
+          </div>
+        </div>
+        <div class="disc-body">
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Filosofia Grega</div><div class="assunto-sub">Sócrates, Platão, Aristóteles</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Iluminismo</div><div class="assunto-sub">Razão, liberdade, enciclopedistas</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Estratificação Social</div><div class="assunto-sub">Castas, estamentos, classes</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Cultura e Identidade</div><div class="assunto-sub">Bumba Meu Boi, cultura maranhense</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Filosofia Moderna</div><div class="assunto-sub">Descartes, Kant, contratualistas</div></div></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="dica-card">
+      <h4>💡 Dicas para Ciências Humanas</h4>
+      <ul>
+        <li>O PAES cobra muito sobre o Maranhão — história, geografia e cultura do estado são essenciais</li>
+        <li>Para História, foque nos séculos XIX e XX, especialmente a história do Brasil</li>
+        <li>Monte uma linha do tempo dos principais acontecimentos históricos brasileiros</li>
+        <li>Para Filosofia, saiba associar o filósofo ao seu pensamento principal</li>
+        <li>Geografia física e humana do Brasil tem peso alto — não negligencie</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== CIÊNCIAS DA NATUREZA ===== -->
+  <div class="area-panel" id="panel-natureza">
+    <div class="area-panel-header" style="background:var(--green)">
+      <div><h2>🔬 Ciências da Natureza</h2><p>Biologia · Química · Física</p></div>
+      <div class="area-questoes-badge"><span class="num">15</span><span class="lab">questões</span></div>
+    </div>
+    <div class="disciplinas-grid">
+
+      <!-- Biologia -->
+      <div class="disciplina-card">
+        <div class="disc-header" style="background:#1E8449">
+          <div class="disc-header-left">
+            <span class="disc-icon">🧬</span>
+            <div><div class="disc-nome">Biologia</div><div class="disc-qtd">~6 questões</div></div>
+          </div>
+        </div>
+        <div class="disc-body">
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Genética Mendeliana</div><div class="assunto-sub">1ª e 2ª lei, cruzamentos, heredogramas</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Ecologia</div><div class="assunto-sub">Cadeias alimentares, biomas, relações ecológicas</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Divisão Celular</div><div class="assunto-sub">Mitose e meiose, fases e diferenças</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Evolução</div><div class="assunto-sub">Darwin, seleção natural, especiação</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Fotossíntese e Respiração</div><div class="assunto-sub">Fases, reagentes, produtos</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Sistema Imunológico</div><div class="assunto-sub">Vacinas, anticorpos, imunidade</div></div></div>
+        </div>
+      </div>
+
+      <!-- Química -->
+      <div class="disciplina-card">
+        <div class="disc-header" style="background:#117A65">
+          <div class="disc-header-left">
+            <span class="disc-icon">⚗️</span>
+            <div><div class="disc-nome">Química</div><div class="disc-qtd">~5 questões</div></div>
+          </div>
+        </div>
+        <div class="disc-body">
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Ligações Químicas</div><div class="assunto-sub">Iônica, covalente, metálica</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Ácidos e Bases — pH</div><div class="assunto-sub">Escala pH, indicadores, neutralização</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Balanceamento de Equações</div><div class="assunto-sub">Estequiometria, cálculos</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Tabela Periódica</div><div class="assunto-sub">Grupos, períodos, propriedades</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Química Orgânica</div><div class="assunto-sub">Funções orgânicas, hidrocarbonetos</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-baixo">BAI</div><div style="flex:1"><div class="assunto-nome">Termoquímica</div><div class="assunto-sub">Entalpia, reações exo e endotérmicas</div></div></div>
+        </div>
+      </div>
+
+      <!-- Física -->
+      <div class="disciplina-card">
+        <div class="disc-header" style="background:#1A6636">
+          <div class="disc-header-left">
+            <span class="disc-icon">⚡</span>
+            <div><div class="disc-nome">Física</div><div class="disc-qtd">~4 questões</div></div>
+          </div>
+        </div>
+        <div class="disc-body">
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Leis de Newton</div><div class="assunto-sub">1ª, 2ª e 3ª lei — aplicações</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Energia</div><div class="assunto-sub">Cinética, potencial, conservação</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Eletricidade</div><div class="assunto-sub">Lei de Ohm, circuitos, potência</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Óptica</div><div class="assunto-sub">Reflexão, refração, espelhos e lentes</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-baixo">BAI</div><div style="flex:1"><div class="assunto-nome">Ondas</div><div class="assunto-sub">Frequência, comprimento, velocidade</div></div></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="dica-card">
+      <h4>💡 Dicas para Ciências da Natureza</h4>
+      <ul>
+        <li>Em Biologia, genética tem aparecido em quase todas as provas — priorize</li>
+        <li>Para Química, pratique balanceamento e cálculos estequiométricos</li>
+        <li>Física no PAES costuma cobrar as Leis de Newton e energia — resolva muitos exercícios</li>
+        <li>Faça mapas mentais conectando os assuntos de biologia (ex: fotossíntese + ecologia)</li>
+        <li>Não negligencie as fórmulas de Física — monte um caderno de fórmulas resumidas</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== MATEMÁTICA ===== -->
+  <div class="area-panel" id="panel-matematica">
+    <div class="area-panel-header" style="background:var(--red)">
+      <div><h2>📐 Matemática</h2><p>Todas as subáreas da Matemática do Ensino Médio</p></div>
+      <div class="area-questoes-badge"><span class="num">15</span><span class="lab">questões</span></div>
+    </div>
+    <div class="disciplinas-grid">
+
+      <!-- Álgebra -->
+      <div class="disciplina-card">
+        <div class="disc-header" style="background:#C0392B">
+          <div class="disc-header-left">
+            <span class="disc-icon">📈</span>
+            <div><div class="disc-nome">Álgebra e Funções</div><div class="disc-qtd">~6 questões</div></div>
+          </div>
+        </div>
+        <div class="disc-body">
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Funções Quadráticas (2º grau)</div><div class="assunto-sub">Vértice, raízes, gráfico da parábola</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Equação do 2º grau / Bhaskara</div><div class="assunto-sub">Discriminante, raízes, soma e produto</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Funções Exponenciais</div><div class="assunto-sub">f(x) = aˣ, propriedades, crescimento</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Logaritmos</div><div class="assunto-sub">Definição, propriedades, equações</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Funções Lineares</div><div class="assunto-sub">Coeficientes, gráfico, interseções</div></div></div>
+        </div>
+      </div>
+
+      <!-- Sequências e Probabilidade -->
+      <div class="disciplina-card">
+        <div class="disc-header" style="background:#A93226">
+          <div class="disc-header-left">
+            <span class="disc-icon">📊</span>
+            <div><div class="disc-nome">Sequências e Probabilidade</div><div class="disc-qtd">~5 questões</div></div>
+          </div>
+        </div>
+        <div class="disc-body">
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Progressão Aritmética (PA)</div><div class="assunto-sub">Termo geral, soma dos termos</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Progressão Geométrica (PG)</div><div class="assunto-sub">Razão, termo geral, soma</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Probabilidade</div><div class="assunto-sub">Espaço amostral, P = casos favoráveis / total</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Análise Combinatória</div><div class="assunto-sub">Permutação, combinação, arranjo</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Estatística</div><div class="assunto-sub">Média, moda, mediana, desvio padrão</div></div></div>
+        </div>
+      </div>
+
+      <!-- Geometria -->
+      <div class="disciplina-card">
+        <div class="disc-header" style="background:#922B21">
+          <div class="disc-header-left">
+            <span class="disc-icon">📐</span>
+            <div><div class="disc-nome">Geometria e Trigonometria</div><div class="disc-qtd">~4 questões</div></div>
+          </div>
+        </div>
+        <div class="disc-body">
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Geometria Plana</div><div class="assunto-sub">Área de triângulo, quadrado, círculo</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-alto">ALTA</div><div style="flex:1"><div class="assunto-nome">Trigonometria</div><div class="assunto-sub">Seno, cosseno, tangente — Pitágoras</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Geometria Espacial</div><div class="assunto-sub">Volume de esfera, cilindro, cone, prisma</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-medio">MÉD</div><div style="flex:1"><div class="assunto-nome">Matrizes e Determinantes</div><div class="assunto-sub">Operações, determinante 2×2 e 3×3</div></div></div>
+          <div class="assunto-item"><div class="assunto-peso peso-baixo">BAI</div><div style="flex:1"><div class="assunto-nome">Números Complexos</div><div class="assunto-sub">Módulo, forma algébrica</div></div></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="dica-card">
+      <h4>💡 Dicas para Matemática</h4>
+      <ul>
+        <li>Matemática exige prática diária — resolva pelo menos 5 questões por dia</li>
+        <li>Funções quadráticas, PA/PG e probabilidade caem em praticamente todas as provas</li>
+        <li>Monte um caderno de fórmulas organizado por assunto e revise-o diariamente</li>
+        <li>Resolva as questões de Matemática das provas anteriores para entender o estilo</li>
+        <li>Não pule etapas — domine o básico antes de ir para os assuntos avançados</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div style="background:var(--navy);border-radius:14px;padding:2rem;text-align:center;margin-top:3rem">
+    <div style="font-size:2rem;margin-bottom:0.8rem">♛</div>
+    <h2 style="color:var(--gold);font-size:1.4rem;margin-bottom:0.5rem">Agora que você sabe o que estudar...</h2>
+    <p style="color:var(--gray);margin-bottom:1.5rem">Teste seus conhecimentos com o simulado completo de 60 questões!</p>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      <a href="simulado.html" class="btn btn-gold btn-lg">🎯 Fazer Simulado</a>
+      <a href="provas.html" class="btn btn-navy btn-lg">📂 Provas Anteriores</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- BOTÃO WHATSAPP FLUTUANTE -->
+<div class="wpp-float">
+  <span class="wpp-label">💬 Mentoria PAES</span>
+  <a class="wpp-float-btn" href="https://wa.me/5598983025879?text=Olá%20Thiago!%20Quero%20saber%20mais%20sobre%20a%20Mentoria%20PAES%20UEMA%20🎯" target="_blank" rel="noopener">
+    <span class="wpp-icon">📱</span> Falar com Thiago
+  </a>
+</div>
+
+<footer>
+  <div class="container">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;align-items:center">
+      <div class="footer-brand">♛ O Reizinho do PAES</div>
+      <div class="footer-links">
+        <a href="simulado.html">Simulado</a>
+        <a href="provas.html">Provas Anteriores</a>
+        <a href="resultado.html">Resultado</a>
+      </div>
+    </div>
+    <div class="footer-wpp">
+      <div class="footer-wpp-texto">
+        <strong>📱 Mentoria Particular com Thiago Tiers</strong>
+        <span>Quer acelerar sua aprovação? Fale direto no WhatsApp!</span>
+      </div>
+      <a class="footer-wpp-btn" href="https://wa.me/5598983025879?text=Olá%20Thiago!%20Quero%20saber%20mais%20sobre%20a%20Mentoria%20PAES%20UEMA%20🎯" target="_blank" rel="noopener">
+        💬 (98) 98302-5879
+      </a>
+    </div>
+    <div class="footer-bottom">♛ Thiago Tiers — O Reizinho do PAES UEMA</div>
+  </div>
+</footer>
+
+<script>
+function mostrarArea(id, btn) {
+  document.querySelectorAll('.area-panel').forEach(p => p.classList.remove('ativo'));
+  document.querySelectorAll('.area-tab').forEach(t => t.classList.remove('ativa'));
+  document.getElementById('panel-' + id).classList.add('ativo');
+  btn.classList.add('ativa');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulado PAES — O Reizinho do PAES</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background: #F0F3F8; }
+
+    /* ── Layout do simulado ── */
+    .sim-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      grid-template-rows: auto 1fr;
+      gap: 0;
+      min-height: calc(100vh - 64px);
+    }
+
+    /* ── Sidebar ── */
+    .sim-sidebar {
+      background: var(--navy);
+      padding: 1.2rem;
+      overflow-y: auto;
+      max-height: calc(100vh - 64px);
+      position: sticky;
+      top: 64px;
+    }
+
+    .timer-box {
+      background: var(--navy2);
+      border: 2px solid var(--gold);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      margin-bottom: 1.2rem;
+    }
+
+    .timer-label {
+      font-size: 0.72rem;
+      color: var(--gray);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+
+    #timer {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--gold);
+      font-family: Consolas, monospace;
+      letter-spacing: 2px;
+    }
+
+    .progresso-box {
+      background: var(--navy2);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .progresso-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+      font-size: 0.85rem;
+      color: var(--gray);
+    }
+
+    #progresso-pct { color: var(--gold); font-weight: 700; }
+
+    .nav-area-label {
+      font-size: 0.7rem;
+      color: var(--gold2);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-weight: 700;
+      padding: 0.5rem 0 0.3rem;
+      border-top: 1px solid #1B2A4A;
+      margin-top: 0.5rem;
+    }
+
+    .nav-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+      margin-bottom: 0.5rem;
+    }
+
+    .nav-q-btn {
+      background: #1B2A4A;
+      color: var(--gray);
+      border: 1px solid #2A3D5C;
+      border-radius: 5px;
+      padding: 0;
+      height: 32px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .nav-q-btn:hover { background: var(--navy2); color: #fff; }
+    .nav-q-btn.respondida { background: #1A4A2E; color: #4CAF50; border-color: #2E7D50; }
+    .nav-q-btn.atual { background: var(--gold); color: var(--navy); border-color: var(--gold); font-weight: 900; }
+    .nav-q-btn.atual.respondida { background: var(--gold); color: var(--navy); }
+
+    .nav-legenda {
+      display: flex;
+      gap: 0.8rem;
+      font-size: 0.72rem;
+      color: var(--gray);
+      margin-top: 0.8rem;
+      flex-wrap: wrap;
+    }
+    .nav-legenda span { display: flex; align-items: center; gap: 0.3rem; }
+    .leg-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+    .btn-encerrar {
+      width: 100%;
+      margin-top: 1.2rem;
+      padding: 0.85rem;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-encerrar:hover { opacity: 0.88; }
+
+    /* ── Área da questão ── */
+    .sim-main {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .q-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    #q-numero {
+      font-size: 1rem;
+      font-weight: 900;
+      color: var(--navy);
+    }
+
+    #q-area { font-size: 0.8rem; }
+    #q-disciplina { font-size: 0.8rem; }
+
+    .q-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.1);
+      padding: 2rem;
+      flex: 1;
+    }
+
+    #q-enunciado {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--navy);
+      margin-bottom: 2rem;
+      border-bottom: 1px solid #E0E6EF;
+      padding-bottom: 1.5rem;
+    }
+
+    #q-alternativas {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+
+    .alt-btn {
+      width: 100%;
+      background: #F8FAFC;
+      border: 2px solid #E0E6EF;
+      border-radius: 8px;
+      padding: 0.9rem 1.2rem;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      font-size: 0.95rem;
+      color: var(--navy);
+      transition: all 0.15s;
+      line-height: 1.5;
+    }
+
+    .alt-btn:hover {
+      background: #EEF4FF;
+      border-color: var(--blue);
+      color: var(--navy);
+    }
+
+    .alt-btn.selecionada {
+      background: #FFF8DC;
+      border-color: var(--gold);
+      color: var(--navy);
+      font-weight: 600;
+    }
+
+    .alt-letra {
+      background: var(--navy);
+      color: var(--gold);
+      border-radius: 6px;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .alt-btn.selecionada .alt-letra {
+      background: var(--gold);
+      color: var(--navy);
+    }
+
+    /* ── Navegação inferior ── */
+    .q-nav-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.5rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .q-nav-bottom button {
+      padding: 0.7rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border: 2px solid;
+      transition: all 0.15s;
+    }
+
+    #btn-prev {
+      background: #fff;
+      color: var(--navy);
+      border-color: #D0D8E4;
+    }
+    #btn-prev:hover:not(:disabled) { border-color: var(--navy); }
+    #btn-prev:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    #btn-next {
+      background: var(--navy);
+      color: var(--gold);
+      border-color: var(--navy);
+    }
+    #btn-next:hover:not(:disabled) { background: var(--navy2); }
+    #btn-next:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── Tela de início ── */
+    .tela-inicio {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 64px);
+      padding: 2rem;
+      background: var(--navy);
+    }
+
+    .inicio-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 3rem;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+
+    .inicio-card h1 {
+      font-size: 1.8rem;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+
+    .inicio-infos {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .inicio-info {
+      background: var(--light);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .inicio-info-num {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--navy);
+      display: block;
+    }
+
+    .inicio-info-label {
+      font-size: 0.78rem;
+      color: var(--gray);
+    }
+
+    .inicio-regras {
+      text-align: left;
+      background: #FFF8DC;
+      border: 1px solid var(--gold);
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 2rem;
+      font-size: 0.88rem;
+      color: var(--navy);
+      line-height: 1.8;
+    }
+
+    .btn-iniciar {
+      background: var(--gold);
+      color: var(--navy);
+      border: none;
+      border-radius: 10px;
+      padding: 1rem 2.5rem;
+      font-size: 1.1rem;
+      font-weight: 900;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 16px rgba(255,215,0,0.4);
+    }
+
+    .btn-iniciar:hover {
+      background: var(--gold2);
+      transform: translateY(-2px);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .sim-layout { grid-template-columns: 1fr; }
+      .sim-sidebar {
+        position: fixed;
+        top: 64px;
+        left: -300px;
+        width: 280px;
+        height: calc(100vh - 64px);
+        z-index: 999;
+        transition: left 0.3s;
+      }
+      .sim-sidebar.aberta { left: 0; }
+      .sim-main { padding: 1rem; }
+      .inicio-infos { grid-template-columns: 1fr; }
+      .q-card { padding: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="index.html" class="navbar-brand">
+    <span class="crown">♛</span>
+    O Reizinho do PAES
+  </a>
+  <button class="hamburger" onclick="document.querySelector('.navbar-nav').classList.toggle('open')">☰</button>
+  <ul class="navbar-nav">
+    <li><a href="index.html">Início</a></li>
+    <li><a href="simulado.html" class="active">Simulados</a></li>
+    <li><a href="provas.html">Provas Anteriores</a></li>
+    <li><a href="assuntos.html">Assuntos</a></li>
+  </ul>
+</nav>
+
+<!-- TELA DE INÍCIO -->
+<div class="tela-inicio" id="tela-inicio">
+  <div class="inicio-card">
+    <div style="font-size:2.5rem;margin-bottom:0.5rem">♛</div>
+    <h1>Simulado PAES UEMA</h1>
+    <p style="color:var(--gray);margin-bottom:0.5rem">Thiago Tiers — O Reizinho do PAES</p>
+
+    <div class="inicio-infos">
+      <div class="inicio-info">
+        <span class="inicio-info-num">60</span>
+        <span class="inicio-info-label">Questões</span>
+      </div>
+      <div class="inicio-info">
+        <span class="inicio-info-num">2h30</span>
+        <span class="inicio-info-label">Duração</span>
+      </div>
+      <div class="inicio-info">
+        <span class="inicio-info-num">4</span>
+        <span class="inicio-info-label">Áreas</span>
+      </div>
+    </div>
+
+    <div class="inicio-regras">
+      <strong>📋 Instruções:</strong><br>
+      • Você terá <strong>2 horas e 30 minutos</strong> para responder as 60 questões<br>
+      • Pode navegar livremente entre as questões<br>
+      • Para <strong>desmarcar</strong> uma alternativa, clique nela novamente<br>
+      • O resultado é calculado com <strong>desvio padrão</strong>, como no PAES oficial<br>
+      • O simulado encerra automaticamente ao fim do tempo<br>
+      • Mantenha o foco. <strong>Boa sorte! 👑</strong>
+    </div>
+
+    <button class="btn-iniciar" onclick="iniciarSimulado()">
+      ♛ Iniciar Simulado Agora
+    </button>
+
+    <div style="margin-top:1.5rem;font-size:0.85rem;color:var(--gray)">
+      <a href="provas.html" style="color:var(--blue)">Ver provas anteriores</a> &nbsp;|&nbsp;
+      <a href="assuntos.html" style="color:var(--blue)">Estudar assuntos</a>
+    </div>
+  </div>
+</div>
+
+<!-- LAYOUT DO SIMULADO (oculto até iniciar) -->
+<div class="sim-layout" id="sim-layout" style="display:none">
+
+  <!-- SIDEBAR -->
+  <aside class="sim-sidebar" id="sim-sidebar">
+    <!-- Timer -->
+    <div class="timer-box">
+      <div class="timer-label">⏱ Tempo Restante</div>
+      <div id="timer">02:30:00</div>
+    </div>
+
+    <!-- Progresso -->
+    <div class="progresso-box">
+      <div class="progresso-header">
+        <span id="progresso-texto">0/60 respondidas</span>
+        <span id="progresso-pct">0%</span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progresso-bar" style="width:0%;background:var(--green)"></div>
+      </div>
+    </div>
+
+    <!-- Mapa de questões -->
+    <div id="nav-questoes"></div>
+
+    <div class="nav-legenda">
+      <span><span class="leg-dot" style="background:#1A4A2E"></span>Respondida</span>
+      <span><span class="leg-dot" style="background:var(--gold)"></span>Atual</span>
+      <span><span class="leg-dot" style="background:#1B2A4A"></span>Pendente</span>
+    </div>
+
+    <button class="btn-encerrar" onclick="encerrarSimulado()">
+      ✔ Encerrar Simulado
+    </button>
+  </aside>
+
+  <!-- MAIN — Questão -->
+  <main class="sim-main">
+    <div class="q-header">
+      <span id="q-numero" style="font-size:1rem;font-weight:900;color:var(--navy)">Questão 1 de 60</span>
+      <span id="q-area" class="badge badge-blue"></span>
+      <span id="q-disciplina" class="badge badge-navy"></span>
+      <button id="btn-sidebar-toggle"
+        style="display:none;margin-left:auto;background:var(--navy);color:var(--gold);border:none;border-radius:6px;padding:0.4rem 0.8rem;cursor:pointer;font-size:0.85rem"
+        onclick="document.getElementById('sim-sidebar').classList.toggle('aberta')">
+        ☰ Questões
+      </button>
+    </div>
+
+    <div class="q-card">
+      <div id="q-enunciado"></div>
+      <ul id="q-alternativas"></ul>
+    </div>
+
+    <div class="q-nav-bottom">
+      <button id="btn-prev" onclick="questaoAnterior()">← Anterior</button>
+      <div style="display:flex;gap:0.5rem;align-items:center">
+        <span style="font-size:0.88rem;color:var(--gray)">Ir para:</span>
+        <select id="ir-para-sel"
+          style="padding:0.5rem;border-radius:6px;border:1px solid #D0D8E4;font-size:0.9rem;color:var(--navy)"
+          onchange="irParaQuestao(parseInt(this.value));this.value=''">
+          <option value="">— escolha —</option>
+          ${Array.from({length:60},(_,i)=>`<option value="${i+1}">Questão ${i+1}</option>`).join('')}
+        </select>
+      </div>
+      <button id="btn-next" onclick="proximaQuestao()">Próxima →</button>
+    </div>
+  </main>
+
+</div>
+
+<!-- BOTÃO WHATSAPP FLUTUANTE -->
+<div class="wpp-float">
+  <span class="wpp-label">💬 Mentoria PAES</span>
+  <a class="wpp-float-btn" href="https://wa.me/5598983025879?text=Olá%20Thiago!%20Quero%20saber%20mais%20sobre%20a%20Mentoria%20PAES%20UEMA%20🎯" target="_blank" rel="noopener">
+    <span class="wpp-icon">📱</span> Falar com Thiago
+  </a>
+</div>
+
+<script src="questoes.js"></script>
+<script src="simulador.js"></script>
+<script>
+  function iniciarSimulado() {
+    document.getElementById('tela-inicio').style.display = 'none';
+    document.getElementById('sim-layout').style.display = 'grid';
+    // Mostrar botão sidebar no mobile
+    if (window.innerWidth <= 768) {
+      document.getElementById('btn-sidebar-toggle').style.display = 'block';
+    }
+  }
+</script>
+</body>
+</html>

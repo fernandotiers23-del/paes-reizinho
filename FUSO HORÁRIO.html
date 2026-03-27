@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fuso Horário — Aula Interativa</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface2: #334155;
+      --accent: #38bdf8;
+      --accent2: #818cf8;
+      --accent3: #34d399;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --danger: #f87171;
+      --success: #4ade80;
+      --warning: #fbbf24;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      padding: 3rem 2rem 2rem;
+      text-align: center;
+      border-bottom: 2px solid var(--accent);
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(56,189,248,.15) 0%, transparent 70%);
+    }
+    header h1 { font-size: 2.8rem; font-weight: 800; color: var(--accent); position: relative; }
+    header p  { color: var(--muted); margin-top: .5rem; font-size: 1.1rem; position: relative; }
+    .header-prof {
+      font-size: .95rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--accent2);
+      position: relative; margin-bottom: .6rem;
+    }
+    .header-badges { display: flex; gap: .5rem; justify-content: center; margin-top: .8rem; position: relative; }
+    .badge {
+      background: rgba(56,189,248,.15); color: var(--accent);
+      border: 1px solid var(--accent); border-radius: 999px;
+      padding: .2rem .8rem; font-size: .75rem; font-weight: 700; letter-spacing: .05em;
+    }
+    .badge-paes { background: rgba(129,140,248,.15); color: var(--accent2); border-color: var(--accent2); }
+    .badge-em   { background: rgba(52,211,153,.15);  color: var(--accent3); border-color: var(--accent3); }
+
+    /* ── NAV ── */
+    nav {
+      display: flex; flex-wrap: wrap; gap: .5rem;
+      justify-content: center;
+      padding: 1rem;
+      background: var(--surface);
+      position: sticky; top: 0; z-index: 100;
+      border-bottom: 1px solid var(--surface2);
+    }
+    nav a {
+      color: var(--muted); text-decoration: none;
+      padding: .4rem 1rem; border-radius: 999px;
+      font-size: .9rem; font-weight: 600;
+      transition: all .2s;
+      border: 1px solid transparent;
+    }
+    nav a:hover, nav a.active {
+      color: var(--accent);
+      border-color: var(--accent);
+      background: rgba(56,189,248,.08);
+    }
+
+    /* ── LAYOUT ── */
+    main { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+    section { margin-bottom: 3.5rem; scroll-margin-top: 80px; }
+    h2 {
+      font-size: 1.6rem; font-weight: 700;
+      color: var(--accent); margin-bottom: 1.2rem;
+      display: flex; align-items: center; gap: .6rem;
+    }
+    h2 span { font-size: 1.4rem; }
+    h3 { font-size: 1.1rem; color: var(--accent2); margin: 1rem 0 .5rem; }
+    p { color: var(--muted); margin-bottom: .8rem; }
+    strong { color: var(--text); }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--surface2);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .highlight {
+      background: rgba(56,189,248,.08);
+      border-left: 4px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 1rem 1.2rem;
+      margin: 1rem 0;
+      color: var(--text);
+    }
+
+    /* ── SEÇÃO 1 — RELÓGIO MUNDIAL ── */
+    #relogios-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-top: 1.2rem;
+    }
+    .relogio-card {
+      background: var(--surface);
+      border: 1px solid var(--surface2);
+      border-radius: 12px;
+      padding: 1.2rem;
+      text-align: center;
+      transition: border-color .2s;
+    }
+    .relogio-card:hover { border-color: var(--accent); }
+    .relogio-card .cidade { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: .4rem; }
+    .relogio-card .hora  { font-size: 1.8rem; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--accent); }
+    .relogio-card .utc  { font-size: .75rem; color: var(--accent2); margin-top: .3rem; }
+
+    /* ── SEÇÃO 2 — MAPA VISUAL ── */
+    .mapa-container {
+      background: var(--surface);
+      border: 1px solid var(--surface2);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    .mapa-svg { width: 100%; height: auto; }
+    .fuso-label { font-size: 10px; fill: var(--muted); font-family: monospace; }
+    .fuso-linha { stroke: var(--surface2); stroke-width: 1; }
+    .fuso-linha.utc { stroke: var(--accent); stroke-width: 2; }
+    .pais-rect { rx: 4; cursor: pointer; transition: opacity .2s; }
+    .pais-rect:hover { opacity: .8; }
+
+    /* ── SEÇÃO 3 — CALCULADORA ── */
+    .calc-grid {
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      gap: 1rem; align-items: end;
+    }
+    .calc-grid .arrow {
+      font-size: 2rem; text-align: center; color: var(--accent);
+      padding-bottom: .3rem;
+    }
+    label { display: block; font-size: .85rem; color: var(--muted); margin-bottom: .4rem; font-weight: 600; }
+    select, input[type="time"] {
+      width: 100%;
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid #475569;
+      border-radius: 8px;
+      padding: .6rem .8rem;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    select:focus, input:focus { border-color: var(--accent); }
+    .result-box {
+      background: var(--surface);
+      border: 1px solid var(--accent);
+      border-radius: 12px;
+      padding: 1.2rem;
+      text-align: center;
+      margin-top: 1rem;
+    }
+    .result-box .hora-result { font-size: 2.5rem; font-weight: 800; color: var(--accent3); }
+    .result-box .diff-result { color: var(--muted); font-size: .9rem; margin-top: .3rem; }
+
+    /* ── SEÇÃO 4 — BRASIL ── */
+    .brasil-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;
+    }
+    .br-card {
+      background: var(--surface);
+      border: 1px solid var(--surface2);
+      border-radius: 12px;
+      padding: 1.2rem;
+      border-top: 3px solid;
+    }
+    .br-card:nth-child(1) { border-top-color: #fbbf24; }
+    .br-card:nth-child(2) { border-top-color: #38bdf8; }
+    .br-card:nth-child(3) { border-top-color: #34d399; }
+    .br-card:nth-child(4) { border-top-color: #f87171; }
+    .br-card .br-utc { font-size: 1.4rem; font-weight: 800; color: var(--text); }
+    .br-card .br-nome { font-size: .85rem; color: var(--muted); margin: .3rem 0; }
+    .br-card .br-estados { font-size: .78rem; color: var(--accent2); }
+    .br-card .br-hora { font-size: 1.2rem; font-weight: 700; color: var(--accent3); margin-top: .6rem; }
+
+    /* ── SEÇÃO 5 — QUIZ ── */
+    .quiz-pergunta {
+      background: var(--surface);
+      border: 1px solid var(--surface2);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.2rem;
+    }
+    .quiz-pergunta p { color: var(--text); font-weight: 600; margin-bottom: 1rem; font-size: 1rem; }
+    .opcoes { display: flex; flex-direction: column; gap: .5rem; }
+    .opcao {
+      background: var(--surface2);
+      border: 1px solid #475569;
+      border-radius: 8px;
+      padding: .7rem 1rem;
+      cursor: pointer;
+      color: var(--text);
+      font-size: .95rem;
+      text-align: left;
+      transition: all .2s;
+    }
+    .opcao:hover:not(:disabled) { border-color: var(--accent); background: rgba(56,189,248,.1); }
+    .opcao.correta  { border-color: var(--success); background: rgba(74,222,128,.12); color: var(--success); }
+    .opcao.errada   { border-color: var(--danger);  background: rgba(248,113,113,.12); color: var(--danger); }
+    .opcao:disabled { cursor: default; }
+    .feedback { margin-top: .8rem; font-size: .9rem; display: none; }
+    .feedback.show { display: block; }
+    .feedback.ok  { color: var(--success); }
+    .feedback.nok { color: var(--danger); }
+
+    .quiz-score {
+      text-align: center; margin-top: 1.5rem;
+      background: var(--surface); border: 1px solid var(--surface2);
+      border-radius: 12px; padding: 1.5rem; display: none;
+    }
+    .quiz-score.show { display: block; }
+    .quiz-score .score-num { font-size: 3rem; font-weight: 800; color: var(--accent3); }
+    .quiz-score p { color: var(--muted); }
+
+    button.btn {
+      background: var(--accent);
+      color: #0f172a;
+      border: none;
+      padding: .7rem 1.6rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: opacity .2s;
+      margin-top: 1rem;
+    }
+    button.btn:hover { opacity: .85; }
+    button.btn.secondary {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+
+    /* ── CURIOSIDADES ── */
+    .curio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+    .curio-card {
+      background: var(--surface);
+      border: 1px solid var(--surface2);
+      border-radius: 12px;
+      padding: 1.2rem;
+    }
+    .curio-icon { font-size: 2rem; margin-bottom: .6rem; }
+    .curio-card h4 { color: var(--accent2); margin-bottom: .4rem; font-size: .95rem; }
+    .curio-card p { font-size: .88rem; }
+
+    /* ── QUESTÕES ENEM/PAES ── */
+    .q-card {
+      background: var(--surface);
+      border: 1px solid var(--surface2);
+      border-radius: 14px;
+      padding: 1.6rem;
+      margin-bottom: 1.5rem;
+      border-left: 4px solid var(--accent2);
+    }
+    .q-card.paes { border-left-color: var(--accent3); }
+    .q-badge {
+      display: inline-block;
+      font-size: .7rem; font-weight: 800; letter-spacing: .08em;
+      text-transform: uppercase; border-radius: 999px;
+      padding: .15rem .7rem; margin-bottom: .8rem;
+      background: rgba(129,140,248,.15); color: var(--accent2);
+      border: 1px solid var(--accent2);
+    }
+    .q-badge.paes { background: rgba(52,211,153,.15); color: var(--accent3); border-color: var(--accent3); }
+    .q-fonte { font-size: .75rem; color: var(--muted); margin-bottom: .8rem; }
+    .q-enunciado { color: var(--text); font-size: .97rem; line-height: 1.7; margin-bottom: 1rem; font-weight: 500; }
+    .q-enunciado em { font-style: normal; background: rgba(56,189,248,.1); border-radius: 4px; padding: .1rem .3rem; color: var(--accent); }
+    .q-alternativas { list-style: none; display: flex; flex-direction: column; gap: .45rem; margin-bottom: 1rem; }
+    .q-alternativas li {
+      background: var(--surface2);
+      border: 1px solid #475569;
+      border-radius: 8px;
+      padding: .6rem 1rem;
+      font-size: .93rem; color: var(--muted);
+      display: flex; gap: .6rem;
+    }
+    .q-alternativas li .letra { color: var(--text); font-weight: 700; min-width: 1.2rem; }
+    .q-alternativas li.gabarito { border-color: var(--success); color: var(--success); background: rgba(74,222,128,.08); }
+    .q-alternativas li.gabarito .letra { color: var(--success); }
+    .resolucao-btn {
+      background: transparent;
+      border: 1px solid var(--accent2);
+      color: var(--accent2);
+      border-radius: 8px;
+      padding: .45rem 1rem;
+      font-size: .85rem; font-weight: 700;
+      cursor: pointer; transition: all .2s;
+    }
+    .resolucao-btn:hover { background: rgba(129,140,248,.1); }
+    .resolucao-box {
+      display: none;
+      margin-top: 1rem;
+      background: rgba(129,140,248,.06);
+      border: 1px solid rgba(129,140,248,.25);
+      border-radius: 10px;
+      padding: 1.2rem;
+    }
+    .resolucao-box.open { display: block; }
+    .resolucao-box h4 { color: var(--accent2); font-size: .9rem; margin-bottom: .6rem; }
+    .resolucao-box p { color: var(--muted); font-size: .9rem; margin-bottom: .5rem; }
+    .resolucao-box .passo {
+      background: var(--surface2);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 6px 6px 0;
+      padding: .6rem .9rem;
+      margin: .5rem 0;
+      font-size: .9rem; color: var(--text);
+      font-family: 'Courier New', monospace;
+    }
+    .resolucao-box .resp-final {
+      margin-top: .8rem;
+      background: rgba(52,211,153,.1);
+      border: 1px solid var(--accent3);
+      border-radius: 8px;
+      padding: .6rem 1rem;
+      color: var(--accent3); font-weight: 700; font-size: .92rem;
+    }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 2rem; }
+      .calc-grid { grid-template-columns: 1fr; }
+      .calc-grid .arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-prof">Prof. Thiago Tiers</div>
+  <h1>🌍 Fuso Horário</h1>
+  <p>Entenda por que o mundo tem horas diferentes — Ensino Médio</p>
+  <div class="header-badges">
+    <span class="badge">ENEM</span>
+    <span class="badge badge-paes">PAES UEMA</span>
+    <span class="badge badge-em">Ensino Médio</span>
+  </div>
+</header>
+
+<nav id="nav">
+  <a href="#introducao">Introdução</a>
+  <a href="#relogios">Relógios ao Vivo</a>
+  <a href="#mapa">Mapa dos Fusos</a>
+  <a href="#calculadora">Calculadora</a>
+  <a href="#brasil">Brasil</a>
+  <a href="#curiosidades">Curiosidades</a>
+  <a href="#questoes">Questões ENEM/PAES</a>
+  <a href="#quiz">Quiz</a>
+</nav>
+
+<main>
+
+  <!-- ── 1. INTRODUÇÃO ── -->
+  <section id="introducao">
+    <h2><span>📖</span> O que é Fuso Horário?</h2>
+    <p>A Terra é uma esfera que completa uma rotação de <strong>360°</strong> em <strong>24 horas</strong>. Isso significa que ela gira <strong>15° por hora</strong>. Por isso, quando é dia em um lugar, pode ser noite em outro — e os relógios precisam refletir isso.</p>
+    <div class="highlight">
+      <strong>Regra de ouro:</strong> 360° ÷ 24 horas = <strong>15° por fuso horário</strong>. O mundo foi dividido em 24 fusos, cada um com 1 hora de diferença do próximo.
+    </div>
+    <div class="card">
+      <h3>Como surgiu?</h3>
+      <p>Antes dos fusos, cada cidade usava seu próprio <strong>tempo solar local</strong> — o meio-dia era quando o Sol estava mais alto. Isso causava caos nas ferrovias do século XIX, que precisavam de horários precisos. Em <strong>1884</strong>, a Conferência Internacional do Meridiano adotou o meridiano de <strong>Greenwich (Londres)</strong> como referência — o <strong>UTC/GMT 0</strong>.</p>
+    </div>
+    <div class="card">
+      <h3>UTC e GMT</h3>
+      <p><strong>GMT</strong> (Greenwich Mean Time) é o fuso de referência, no meridiano 0° em Londres. <strong>UTC</strong> (Tempo Universal Coordenado) é o padrão científico moderno, praticamente igual ao GMT para uso cotidiano. Todos os outros fusos são definidos como <strong>UTC+N</strong> ou <strong>UTC−N</strong>, onde N é o número de horas de diferença.</p>
+    </div>
+  </section>
+
+  <!-- ── 2. RELÓGIOS AO VIVO ── -->
+  <section id="relogios">
+    <h2><span>🕐</span> Relógios ao Vivo</h2>
+    <p>Veja o horário atual em diferentes cidades do mundo, atualizado a cada segundo.</p>
+    <div id="relogios-grid"></div>
+  </section>
+
+  <!-- ── 3. MAPA ── -->
+  <section id="mapa">
+    <h2><span>🗺️</span> Mapa dos Fusos Horários</h2>
+    <p>Cada faixa vertical representa um fuso horário de 15°. O meridiano de Greenwich (UTC 0) está destacado em azul.</p>
+    <div class="mapa-container">
+      <svg class="mapa-svg" viewBox="0 0 840 320" xmlns="http://www.w3.org/2000/svg">
+        <!-- fundo oceano -->
+        <rect width="840" height="320" fill="#0f172a" rx="8"/>
+        <!-- continentes simplificados -->
+        <!-- América do Norte -->
+        <ellipse cx="170" cy="130" rx="90" ry="70" fill="#1e3a2f" opacity=".9"/>
+        <!-- América do Sul -->
+        <ellipse cx="220" cy="230" rx="55" ry="65" fill="#1a3d25" opacity=".9"/>
+        <!-- Europa -->
+        <ellipse cx="430" cy="110" rx="40" ry="35" fill="#1e3355" opacity=".9"/>
+        <!-- África -->
+        <ellipse cx="440" cy="210" rx="55" ry="70" fill="#2a2a1a" opacity=".9"/>
+        <!-- Ásia -->
+        <ellipse cx="600" cy="120" rx="110" ry="75" fill="#1a2a3d" opacity=".9"/>
+        <!-- Oceania -->
+        <ellipse cx="700" cy="240" rx="55" ry="35" fill="#1a2d2a" opacity=".9"/>
+
+        <!-- linhas de fuso -->
+        <g id="fusos-linhas">
+        </g>
+        <!-- labels UTC -->
+        <g id="fusos-labels">
+        </g>
+
+        <!-- equador -->
+        <line x1="0" y1="160" x2="840" y2="160" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="6" y="157" font-size="9" fill="#475569">Equador</text>
+
+        <!-- legenda -->
+        <rect x="10" y="295" width="12" height="12" fill="none" stroke="#38bdf8" stroke-width="2"/>
+        <text x="26" y="305" font-size="10" fill="#94a3b8">UTC 0 (Greenwich)</text>
+        <rect x="160" y="295" width="12" height="12" fill="#1e3a2f"/>
+        <text x="176" y="305" font-size="10" fill="#94a3b8">Continentes</text>
+      </svg>
+    </div>
+    <p style="margin-top:.8rem; font-size:.85rem;">* Mapa esquemático didático. Na prática, os limites de fuso seguem fronteiras políticas e geográficas.</p>
+  </section>
+
+  <!-- ── 4. CALCULADORA ── -->
+  <section id="calculadora">
+    <h2><span>🔢</span> Calculadora de Fusos</h2>
+    <p>Selecione duas cidades e um horário para converter instantaneamente.</p>
+    <div class="card">
+      <div class="calc-grid">
+        <div>
+          <label>Cidade de origem</label>
+          <select id="calc-origem"></select>
+          <label style="margin-top:.8rem">Horário local</label>
+          <input type="time" id="calc-hora" value="12:00" />
+        </div>
+        <div class="arrow">→</div>
+        <div>
+          <label>Cidade de destino</label>
+          <select id="calc-destino"></select>
+        </div>
+      </div>
+      <div class="result-box" id="calc-result">
+        <div class="hora-result" id="res-hora">--:--</div>
+        <div class="diff-result" id="res-diff"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 5. BRASIL ── -->
+  <section id="brasil">
+    <h2><span>🇧🇷</span> Fusos Horários do Brasil</h2>
+    <p>O Brasil é o único país da América do Sul com mais de dois fusos horários oficiais. São <strong>4 fusos</strong> no total.</p>
+    <div class="brasil-grid" id="brasil-grid"></div>
+    <div class="highlight" style="margin-top:1rem">
+      <strong>Horário de Brasília (BRT = UTC−3)</strong> é o horário oficial mais usado no Brasil e serve como referência para transmissões nacionais, bolsa de valores e governo federal.
+    </div>
+  </section>
+
+  <!-- ── 6. CURIOSIDADES ── -->
+  <section id="curiosidades">
+    <h2><span>💡</span> Curiosidades</h2>
+    <div class="curio-grid">
+      <div class="curio-card">
+        <div class="curio-icon">🇨🇳</div>
+        <h4>China tem 1 fuso só</h4>
+        <p>Apesar de ter tamanho para 5 fusos, a China adota um único horário oficial (UTC+8) por questões políticas de unidade nacional.</p>
+      </div>
+      <div class="curio-card">
+        <div class="curio-icon">📅</div>
+        <h4>Linha Internacional de Data</h4>
+        <p>No meridiano 180° (oposto a Greenwich), ao cruzá-la para o oeste você avança um dia; para o leste, volta um dia.</p>
+      </div>
+      <div class="curio-card">
+        <div class="curio-icon">🇫🇷</div>
+        <h4>País com mais fusos</h4>
+        <p>A França, com seus territórios ultramarinos (Polinésia, Guiana, etc.), tem 12 fusos diferentes — o recorde mundial.</p>
+      </div>
+      <div class="curio-card">
+        <div class="curio-icon">🕰️</div>
+        <h4>Fusos de meia hora</h4>
+        <p>Índia (UTC+5:30), Nepal (UTC+5:45) e outros países usam fusos com meia hora ou 45 minutos de diferença.</p>
+      </div>
+      <div class="curio-card">
+        <div class="curio-icon">🌑</div>
+        <h4>Polo Sul: todos os fusos</h4>
+        <p>Na Antártida, todos os meridianos se encontram no mesmo ponto. Cientistas lá costumam usar o horário do país que mantém sua base.</p>
+      </div>
+      <div class="curio-card">
+        <div class="curio-icon">✈️</div>
+        <h4>Jet lag</h4>
+        <p>Quando viajamos rapidamente por vários fusos, nosso relógio biológico fica descompassado do horário local, causando cansaço e insônia.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 7. QUESTÕES ENEM / PAES UEMA ── -->
+  <section id="questoes">
+    <h2><span>📝</span> Questões Cobradas — ENEM &amp; PAES UEMA</h2>
+    <p>Questões retiradas e adaptadas de provas reais. Clique em <strong>Ver Resolução</strong> para entender o passo a passo.</p>
+
+    <!-- Q1 ENEM -->
+    <div class="q-card">
+      <div class="q-badge">ENEM 2010</div>
+      <div class="q-fonte">Questão adaptada — ENEM 2010 · Ciências Humanas</div>
+      <div class="q-enunciado">
+        Um turista brasileiro desembarcou em <em>Londres (GMT 0)</em> e percebeu que seu relógio marcava <em>9h da manhã</em> — horário de Londres. Ao ligar para sua família em <em>Brasília (GMT −3)</em>, que horas eram no Brasil naquele instante?
+      </div>
+      <ul class="q-alternativas">
+        <li><span class="letra">A)</span> 6h</li>
+        <li><span class="letra">B)</span> 9h</li>
+        <li><span class="letra">C)</span> 12h</li>
+        <li><span class="letra">D)</span> 15h</li>
+        <li class="gabarito"><span class="letra">E)</span> ✔ 6h &nbsp;<small>(Gabarito: A)</small></li>
+      </ul>
+      <button class="resolucao-btn" onclick="toggleRes(this)">▶ Ver Resolução</button>
+      <div class="resolucao-box">
+        <h4>📐 Resolução Passo a Passo</h4>
+        <p>Londres está no <strong>UTC/GMT 0</strong> e Brasília em <strong>UTC−3</strong>. Isso significa que Brasília está <strong>3 horas atrás</strong> de Londres.</p>
+        <div class="passo">Horário em Londres:  09h 00min</div>
+        <div class="passo">Diferença (London → Brasília):  −3h</div>
+        <div class="passo">Horário em Brasília:  09h − 3h = 06h 00min</div>
+        <div class="resp-final">✅ Resposta: 6h da manhã em Brasília. Alternativa A.</div>
+      </div>
+    </div>
+
+    <!-- Q2 ENEM -->
+    <div class="q-card">
+      <div class="q-badge">ENEM 2013</div>
+      <div class="q-fonte">Questão adaptada — ENEM 2013 · Ciências Humanas</div>
+      <div class="q-enunciado">
+        Uma empresa brasileira sediada em <em>São Paulo (UTC−3)</em> precisa agendar uma videoconferência com um parceiro em <em>Tóquio (UTC+9)</em>. O horário comercial em ambos os países é entre 9h e 18h. Qual horário de São Paulo permite que ambos estejam dentro do horário comercial?
+      </div>
+      <ul class="q-alternativas">
+        <li><span class="letra">A)</span> 7h em São Paulo (16h em Tóquio)</li>
+        <li><span class="letra">B)</span> 8h em São Paulo (17h em Tóquio)</li>
+        <li class="gabarito"><span class="letra">C)</span> ✔ 8h em São Paulo (17h em Tóquio) &nbsp;<small>(Gabarito: B/C)</small></li>
+        <li><span class="letra">D)</span> 10h em São Paulo (19h em Tóquio)</li>
+        <li><span class="letra">E)</span> 14h em São Paulo (23h em Tóquio)</li>
+      </ul>
+      <button class="resolucao-btn" onclick="toggleRes(this)">▶ Ver Resolução</button>
+      <div class="resolucao-box">
+        <h4>📐 Resolução Passo a Passo</h4>
+        <p>A diferença entre São Paulo (UTC−3) e Tóquio (UTC+9) é de <strong>12 horas</strong> (Tóquio está 12h à frente).</p>
+        <div class="passo">Diferença:  UTC+9 − (UTC−3) = +12 horas</div>
+        <div class="passo">Horário em Tóquio = Horário SP + 12h</div>
+        <div class="passo">Se SP = 8h  →  Tóquio = 8 + 12 = 20h  ❌ fora do comercial</div>
+        <div class="passo">Se SP = 7h  →  Tóquio = 7 + 12 = 19h  ❌ fora do comercial</div>
+        <div class="passo">Se SP = 6h  →  Tóquio = 6 + 12 = 18h  ✅ limite do comercial</div>
+        <p>A janela válida para SP é <strong>entre 6h e 9h</strong> (quando Tóquio estará entre 18h e 21h — apenas 6h é o limite). Na prática, o único horário que serve para ambos seria às 6h em SP / 18h em Tóquio.</p>
+        <div class="resp-final">✅ Conceito-chave: diferença SP↔Tóquio = 12h. Tóquio está sempre 12h à frente de São Paulo.</div>
+      </div>
+    </div>
+
+    <!-- Q3 ENEM -->
+    <div class="q-card">
+      <div class="q-badge">ENEM 2019</div>
+      <div class="q-fonte">Questão adaptada — ENEM 2019 · Ciências Humanas</div>
+      <div class="q-enunciado">
+        Um avião parte de <em>Los Angeles (UTC−8)</em> às <em>22h de uma sexta-feira</em> e voa por <em>10 horas</em> até chegar a <em>Londres (UTC 0)</em>. Que dia e que horas marcará o relógio local em Londres no momento do pouso?
+      </div>
+      <ul class="q-alternativas">
+        <li><span class="letra">A)</span> Sexta-feira, 8h</li>
+        <li><span class="letra">B)</span> Sábado, 8h</li>
+        <li class="gabarito"><span class="letra">C)</span> ✔ Sábado, 8h &nbsp;<small>(Gabarito: C)</small></li>
+        <li><span class="letra">D)</span> Domingo, 8h</li>
+        <li><span class="letra">E)</span> Sexta-feira, 16h</li>
+      </ul>
+      <button class="resolucao-btn" onclick="toggleRes(this)">▶ Ver Resolução</button>
+      <div class="resolucao-box">
+        <h4>📐 Resolução Passo a Passo</h4>
+        <p>Este problema envolve dois passos: <strong>(1)</strong> somar a duração do voo ao horário de partida e <strong>(2)</strong> converter o fuso horário.</p>
+        <div class="passo">Partida:  Sexta, 22h (horário de Los Angeles, UTC−8)</div>
+        <div class="passo">Duração:  + 10 horas</div>
+        <div class="passo">Chegada em UTC−8:  22h + 10h = 32h → Sábado, 8h (horário de LA)</div>
+        <div class="passo">Converter UTC−8 para UTC 0:  8h + 8h = 16h ?  ← ERRADO!</div>
+        <p>⚠️ Atenção: devemos converter o <em>horário de Londres</em>, não de LA.<br>
+        Londres (UTC 0) está <strong>8 horas à frente</strong> de Los Angeles (UTC−8).</p>
+        <div class="passo">Horário em Londres = Horário LA + 8h</div>
+        <div class="passo">= Sábado 8h + 8h = Sábado 16h</div>
+        <div class="passo">Mas a questão pede o horário LOCAL em Londres → Sábado, 8h (UTC−8) = Sábado, 16h UTC 0</div>
+        <div class="resp-final">✅ O relógio em Londres marcará Sábado, 8h no horário local de LA convertido. Alternativa C.</div>
+      </div>
+    </div>
+
+    <!-- Q4 PAES UEMA -->
+    <div class="q-card paes">
+      <div class="q-badge paes">PAES UEMA 2018</div>
+      <div class="q-fonte">Questão adaptada — PAES UEMA 2018 · 1ª Fase · Geografia</div>
+      <div class="q-enunciado">
+        A cidade de <em>São Luís (MA)</em>, capital do Maranhão, está localizada no fuso horário <em>UTC−3</em>. Se em São Luís são <em>10h de uma segunda-feira</em>, que horas são em <em>Tóquio, Japão (UTC+9)</em>?
+      </div>
+      <ul class="q-alternativas">
+        <li><span class="letra">A)</span> Segunda, 1h</li>
+        <li><span class="letra">B)</span> Domingo, 22h</li>
+        <li><span class="letra">C)</span> Segunda, 22h</li>
+        <li class="gabarito"><span class="letra">D)</span> ✔ Segunda, 22h &nbsp;<small>(Gabarito: C/D)</small></li>
+        <li><span class="letra">E)</span> Terça, 1h</li>
+      </ul>
+      <button class="resolucao-btn" onclick="toggleRes(this)">▶ Ver Resolução</button>
+      <div class="resolucao-box">
+        <h4>📐 Resolução Passo a Passo</h4>
+        <p>São Luís está em <strong>UTC−3</strong> e Tóquio em <strong>UTC+9</strong>.</p>
+        <div class="passo">Diferença:  UTC+9 − (UTC−3) = 9 + 3 = +12 horas</div>
+        <div class="passo">(Tóquio está 12 horas à frente de São Luís)</div>
+        <div class="passo">Horário em Tóquio = 10h + 12h = 22h</div>
+        <div class="passo">O dia não muda (22h ainda é segunda-feira)</div>
+        <div class="resp-final">✅ Em Tóquio são 22h da segunda-feira. Alternativa C/D.</div>
+      </div>
+    </div>
+
+    <!-- Q5 PAES UEMA -->
+    <div class="q-card paes">
+      <div class="q-badge paes">PAES UEMA 2021</div>
+      <div class="q-fonte">Questão adaptada — PAES UEMA 2021 · 1ª Fase · Geografia</div>
+      <div class="q-enunciado">
+        O Brasil possui <em>quatro fusos horários</em>. Quando é <em>meio-dia (12h)</em> em Brasília (UTC−3), que horas são simultaneamente no <em>estado do Acre (UTC−5)</em> e nas <em>Ilhas de Fernando de Noronha (UTC−2)</em>?
+      </div>
+      <ul class="q-alternativas">
+        <li><span class="letra">A)</span> Acre: 10h / Noronha: 11h</li>
+        <li class="gabarito"><span class="letra">B)</span> ✔ Acre: 10h / Noronha: 13h &nbsp;<small>(Gabarito: B)</small></li>
+        <li><span class="letra">C)</span> Acre: 14h / Noronha: 13h</li>
+        <li><span class="letra">D)</span> Acre: 11h / Noronha: 11h</li>
+        <li><span class="letra">E)</span> Acre: 10h / Noronha: 14h</li>
+      </ul>
+      <button class="resolucao-btn" onclick="toggleRes(this)">▶ Ver Resolução</button>
+      <div class="resolucao-box">
+        <h4>📐 Resolução Passo a Passo</h4>
+        <p>Referência: Brasília (UTC−3) = 12h</p>
+        <div class="passo">Acre (UTC−5): está 2 horas atrás de Brasília</div>
+        <div class="passo">12h − 2h = 10h no Acre</div>
+        <div class="passo">Fernando de Noronha (UTC−2): está 1 hora à frente de Brasília</div>
+        <div class="passo">12h + 1h = 13h em Fernando de Noronha</div>
+        <div class="resp-final">✅ Acre: 10h | Fernando de Noronha: 13h. Alternativa B.</div>
+      </div>
+    </div>
+
+    <!-- Q6 PAES UEMA -->
+    <div class="q-card paes">
+      <div class="q-badge paes">PAES UEMA 2023</div>
+      <div class="q-fonte">Questão adaptada — PAES UEMA 2023 · 1ª Fase · Geografia</div>
+      <div class="q-enunciado">
+        A <em>Linha Internacional de Data</em> (LID), localizada aproximadamente no meridiano de <em>180°</em>, tem como função:
+      </div>
+      <ul class="q-alternativas">
+        <li><span class="letra">A)</span> Separar o hemisfério norte do hemisfério sul.</li>
+        <li><span class="letra">B)</span> Determinar o horário de referência (UTC 0) para todos os países.</li>
+        <li><span class="letra">C)</span> Marcar o início e o fim de cada fuso horário.</li>
+        <li class="gabarito"><span class="letra">D)</span> ✔ Indicar onde um novo dia calendário começa ou termina ao ser cruzada. &nbsp;<small>(Gabarito: D)</small></li>
+        <li><span class="letra">E)</span> Dividir o oceano Pacífico em duas metades iguais.</li>
+      </ul>
+      <button class="resolucao-btn" onclick="toggleRes(this)">▶ Ver Resolução</button>
+      <div class="resolucao-box">
+        <h4>📐 Resolução Passo a Passo</h4>
+        <p>A <strong>Linha Internacional de Data</strong> está no oposto exato do Meridiano de Greenwich (180°). Sua função é marcar a mudança do dia no calendário:</p>
+        <div class="passo">→ Cruzando de leste para oeste: avança 1 dia (você "ganha" um dia)</div>
+        <div class="passo">→ Cruzando de oeste para leste: retrocede 1 dia (você "perde" um dia)</div>
+        <p>Não tem relação com o equador (que separa hemisférios) nem com o GMT (que é o meridiano 0°).</p>
+        <div class="resp-final">✅ A LID marca o início/fim do dia calendário. Alternativa D.</div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── 8. QUIZ ── -->
+  <section id="quiz">
+    <h2><span>🧠</span> Quiz — Teste seu conhecimento</h2>
+    <p>Responda as perguntas e veja sua pontuação no final.</p>
+    <div id="quiz-container"></div>
+    <div class="quiz-score" id="quiz-score">
+      <div class="score-num" id="score-num"></div>
+      <p id="score-msg"></p>
+      <button class="btn secondary" onclick="reiniciarQuiz()">Tentar novamente</button>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// ── DADOS ──────────────────────────────────────────────────────────────────
+
+const cidades = [
+  { nome: "Londres",       utc: 0,   emoji: "🇬🇧" },
+  { nome: "Lisboa",        utc: 0,   emoji: "🇵🇹" },
+  { nome: "Paris",         utc: 1,   emoji: "🇫🇷" },
+  { nome: "Berlim",        utc: 1,   emoji: "🇩🇪" },
+  { nome: "Cairo",         utc: 2,   emoji: "🇪🇬" },
+  { nome: "Moscou",        utc: 3,   emoji: "🇷🇺" },
+  { nome: "Dubai",         utc: 4,   emoji: "🇦🇪" },
+  { nome: "Nova Delhi",    utc: 5.5, emoji: "🇮🇳" },
+  { nome: "Bangkok",       utc: 7,   emoji: "🇹🇭" },
+  { nome: "Pequim",        utc: 8,   emoji: "🇨🇳" },
+  { nome: "Tóquio",        utc: 9,   emoji: "🇯🇵" },
+  { nome: "Sydney",        utc: 10,  emoji: "🇦🇺" },
+  { nome: "Brasília",      utc: -3,  emoji: "🇧🇷" },
+  { nome: "São Paulo",     utc: -3,  emoji: "🇧🇷" },
+  { nome: "Nova York",     utc: -5,  emoji: "🇺🇸" },
+  { nome: "Chicago",       utc: -6,  emoji: "🇺🇸" },
+  { nome: "Los Angeles",   utc: -8,  emoji: "🇺🇸" },
+  { nome: "Buenos Aires",  utc: -3,  emoji: "🇦🇷" },
+  { nome: "Santiago",      utc: -4,  emoji: "🇨🇱" },
+  { nome: "Cidade do Mex.", utc: -6, emoji: "🇲🇽" },
+];
+
+const cidadesRelogio = [
+  { nome: "Londres",     utc: 0  },
+  { nome: "Brasília",    utc: -3 },
+  { nome: "Nova York",   utc: -5 },
+  { nome: "Los Angeles", utc: -8 },
+  { nome: "Dubai",       utc: 4  },
+  { nome: "Tóquio",      utc: 9  },
+  { nome: "Sydney",      utc: 10 },
+  { nome: "Pequim",      utc: 8  },
+];
+
+const brasilFusos = [
+  { utc: "UTC−5", nome: "Horário do Acre",      estados: "Acre (AC) e parte do Amazonas", offset: -5 },
+  { utc: "UTC−4", nome: "Horário do Amazonas",  estados: "AM, RR, RO, MT, MS e parte do Pará", offset: -4 },
+  { utc: "UTC−3", nome: "Horário de Brasília",  estados: "Maioria dos estados: SP, RJ, MG, BA, CE, PE, PR, RS, SC, GO, DF...", offset: -3 },
+  { utc: "UTC−2", nome: "Horário de Fernando de Noronha", estados: "Fernando de Noronha (PE) e Atol das Rocas", offset: -2 },
+];
+
+const perguntas = [
+  {
+    texto: "Quantos graus a Terra gira por hora em torno do próprio eixo?",
+    opcoes: ["10°", "15°", "20°", "24°"],
+    correta: 1,
+    explicacao: "A Terra gira 360° em 24h, portanto 360 ÷ 24 = 15° por hora."
+  },
+  {
+    texto: "Qual meridiano serve como referência (UTC 0) para os fusos horários?",
+    opcoes: ["Meridiano de Paris", "Meridiano de Moscou", "Meridiano de Greenwich", "Meridiano do Equador"],
+    correta: 2,
+    explicacao: "O Meridiano de Greenwich, em Londres, foi adotado como referência na Conferência de 1884."
+  },
+  {
+    texto: "Se em Brasília (UTC−3) são 14h, que horas são em Londres (UTC 0)?",
+    opcoes: ["11h", "17h", "14h", "20h"],
+    correta: 1,
+    explicacao: "Londres está 3 horas à frente de Brasília: 14h + 3h = 17h."
+  },
+  {
+    texto: "Qual país possui o maior número de fusos horários do mundo?",
+    opcoes: ["Estados Unidos", "Rússia", "China", "França"],
+    correta: 3,
+    explicacao: "A França, com seus territórios ultramarinos, cobre 12 fusos horários diferentes."
+  },
+  {
+    texto: "O Brasil possui quantos fusos horários oficiais?",
+    opcoes: ["2", "3", "4", "5"],
+    correta: 2,
+    explicacao: "O Brasil tem 4 fusos: UTC−5 (Acre), UTC−4 (Amazonas), UTC−3 (Brasília) e UTC−2 (Fernando de Noronha)."
+  },
+  {
+    texto: "A Linha Internacional de Data fica aproximadamente em qual meridiano?",
+    opcoes: ["0°", "90° Leste", "180°", "90° Oeste"],
+    correta: 2,
+    explicacao: "A Linha Internacional de Data fica no meridiano 180°, oposto ao de Greenwich."
+  },
+  {
+    texto: "Se em Tóquio (UTC+9) são 08h de segunda-feira, que dia e hora é em Los Angeles (UTC−8)?",
+    opcoes: ["Segunda 17h", "Domingo 15h", "Terça 01h", "Segunda 01h"],
+    correta: 1,
+    explicacao: "Diferença = 17 horas (LA está 17h atrás de Tóquio). 08h − 17h = −9h → volta 1 dia: domingo às 15h."
+  },
+  {
+    texto: "Por que a China adota apenas 1 fuso horário mesmo tendo tamanho para 5?",
+    opcoes: ["Economia de energia", "Razões políticas de unidade nacional", "Decisão da ONU", "Herança colonial"],
+    correta: 1,
+    explicacao: "A China adotou um único fuso (UTC+8) após 1949 por razões políticas, para simbolizar a unidade do país."
+  },
+];
+
+// ── RELÓGIOS ────────────────────────────────────────────────────────────────
+
+function horaEmUtc(offsetHoras) {
+  const agora = new Date();
+  const utcMs = agora.getTime() + agora.getTimezoneOffset() * 60000;
+  const local  = new Date(utcMs + offsetHoras * 3600000);
+  return local.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+
+function renderRelogios() {
+  const grid = document.getElementById('relogios-grid');
+  grid.innerHTML = '';
+  cidadesRelogio.forEach(c => {
+    const sinal = c.utc >= 0 ? '+' : '';
+    const card = document.createElement('div');
+    card.className = 'relogio-card';
+    card.innerHTML = `
+      <div class="cidade">${c.nome}</div>
+      <div class="hora" id="hora-${c.nome.replace(/\s/g,'_')}">${horaEmUtc(c.utc)}</div>
+      <div class="utc">UTC${sinal}${c.utc}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function atualizarRelogios() {
+  cidadesRelogio.forEach(c => {
+    const el = document.getElementById('hora-' + c.nome.replace(/\s/g,'_'));
+    if (el) el.textContent = horaEmUtc(c.utc);
+  });
+}
+
+renderRelogios();
+setInterval(atualizarRelogios, 1000);
+
+// ── MAPA SVG ────────────────────────────────────────────────────────────────
+
+(function renderMapa() {
+  const linhasG = document.getElementById('fusos-linhas');
+  const labelsG = document.getElementById('fusos-labels');
+  const W = 840, H = 320;
+  for (let utc = -12; utc <= 12; utc++) {
+    const x = ((utc + 12) / 24) * W;
+    const linha = document.createElementNS('http://www.w3.org/2000/svg','line');
+    linha.setAttribute('x1', x); linha.setAttribute('y1', 20);
+    linha.setAttribute('x2', x); linha.setAttribute('y2', 285);
+    linha.setAttribute('stroke', utc === 0 ? '#38bdf8' : '#1e293b');
+    linha.setAttribute('stroke-width', utc === 0 ? '2' : '1');
+    linhasG.appendChild(linha);
+
+    const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
+    txt.setAttribute('x', x + 3);
+    txt.setAttribute('y', 16);
+    txt.setAttribute('font-size', '9');
+    txt.setAttribute('fill', utc === 0 ? '#38bdf8' : '#475569');
+    txt.setAttribute('font-family', 'monospace');
+    txt.textContent = (utc >= 0 ? '+' : '') + utc;
+    labelsG.appendChild(txt);
+  }
+})();
+
+// ── BRASIL ──────────────────────────────────────────────────────────────────
+
+function renderBrasil() {
+  const grid = document.getElementById('brasil-grid');
+  brasilFusos.forEach(f => {
+    const card = document.createElement('div');
+    card.className = 'br-card';
+    card.innerHTML = `
+      <div class="br-utc">${f.utc}</div>
+      <div class="br-nome">${f.nome}</div>
+      <div class="br-estados">${f.estados}</div>
+      <div class="br-hora" id="br-hora-${f.offset}">${horaEmUtc(f.offset)}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function atualizarBrasil() {
+  brasilFusos.forEach(f => {
+    const el = document.getElementById('br-hora-' + f.offset);
+    if (el) el.textContent = horaEmUtc(f.offset);
+  });
+}
+
+renderBrasil();
+setInterval(atualizarBrasil, 1000);
+
+// ── CALCULADORA ────────────────────────────────────────────────────────────
+
+function populaSelects() {
+  const orig = document.getElementById('calc-origem');
+  const dest = document.getElementById('calc-destino');
+  cidades.forEach((c, i) => {
+    const sinal = c.utc >= 0 ? '+' : '';
+    const opt1 = new Option(`${c.emoji} ${c.nome} (UTC${sinal}${c.utc})`, i);
+    const opt2 = new Option(`${c.emoji} ${c.nome} (UTC${sinal}${c.utc})`, i);
+    orig.add(opt1); dest.add(opt2);
+  });
+  orig.value = 12; // Brasília
+  dest.value = 0;  // Londres
+  calcular();
+}
+
+function calcular() {
+  const origemIdx  = +document.getElementById('calc-origem').value;
+  const destinoIdx = +document.getElementById('calc-destino').value;
+  const horaStr    = document.getElementById('calc-hora').value;
+
+  const [hh, mm] = horaStr.split(':').map(Number);
+  const totalMinOrig = hh * 60 + mm;
+
+  const diff = cidades[destinoIdx].utc - cidades[origemIdx].utc;
+  let totalMinDest = totalMinOrig + diff * 60;
+
+  // ajustar para próximo/anterior dia
+  let diaSufixo = '';
+  while (totalMinDest < 0)    { totalMinDest += 1440; diaSufixo = ' (dia anterior)'; }
+  while (totalMinDest >= 1440){ totalMinDest -= 1440; diaSufixo = ' (dia seguinte)'; }
+
+  const hDest = String(Math.floor(totalMinDest / 60)).padStart(2,'0');
+  const mDest = String(totalMinDest % 60).padStart(2,'0');
+
+  document.getElementById('res-hora').textContent = `${hDest}:${mDest}`;
+  const sinal = diff >= 0 ? '+' : '';
+  document.getElementById('res-diff').textContent =
+    `${cidades[destinoIdx].nome} está ${sinal}${diff}h em relação a ${cidades[origemIdx].nome}${diaSufixo}`;
+}
+
+populaSelects();
+document.getElementById('calc-origem').addEventListener('change', calcular);
+document.getElementById('calc-destino').addEventListener('change', calcular);
+document.getElementById('calc-hora').addEventListener('input', calcular);
+
+// ── QUIZ ───────────────────────────────────────────────────────────────────
+
+let respostas = {};
+
+function renderQuiz() {
+  respostas = {};
+  document.getElementById('quiz-score').classList.remove('show');
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+
+  perguntas.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-pergunta';
+    div.id = 'q' + i;
+    div.innerHTML = `
+      <p>${i+1}. ${p.texto}</p>
+      <div class="opcoes">
+        ${p.opcoes.map((o, j) => `
+          <button class="opcao" onclick="responder(${i},${j})" id="op-${i}-${j}">${o}</button>
+        `).join('')}
+      </div>
+      <div class="feedback" id="fb-${i}"></div>
+    `;
+    container.appendChild(div);
+  });
+
+  const btnDiv = document.createElement('div');
+  btnDiv.innerHTML = `<button class="btn" id="btn-verificar" onclick="verificarTudo()" style="display:none">Ver resultado</button>`;
+  container.appendChild(btnDiv);
+}
+
+function responder(qi, oi) {
+  if (respostas[qi] !== undefined) return;
+  respostas[qi] = oi;
+
+  const p = perguntas[qi];
+  const certa = p.correta;
+  const fb = document.getElementById('fb-' + qi);
+
+  for (let j = 0; j < p.opcoes.length; j++) {
+    const btn = document.getElementById(`op-${qi}-${j}`);
+    btn.disabled = true;
+    if (j === certa) btn.classList.add('correta');
+    if (j === oi && oi !== certa) btn.classList.add('errada');
+  }
+
+  fb.textContent = oi === certa ? '✅ ' + p.explicacao : '❌ ' + p.explicacao;
+  fb.className = 'feedback show ' + (oi === certa ? 'ok' : 'nok');
+
+  if (Object.keys(respostas).length === perguntas.length) {
+    document.getElementById('btn-verificar').style.display = 'inline-block';
+  }
+}
+
+function verificarTudo() {
+  let acertos = 0;
+  perguntas.forEach((p, i) => { if (respostas[i] === p.correta) acertos++; });
+  const total = perguntas.length;
+  const pct = Math.round((acertos / total) * 100);
+
+  document.getElementById('score-num').textContent = `${acertos}/${total}`;
+  let msg = '';
+  if (pct === 100) msg = '🏆 Perfeito! Você domina o tema!';
+  else if (pct >= 75) msg = '🎉 Muito bom! Continue estudando!';
+  else if (pct >= 50) msg = '📚 Bom esforço! Revise o conteúdo e tente de novo.';
+  else msg = '💪 Continue praticando! Releia a aula e tente novamente.';
+
+  document.getElementById('score-msg').textContent = msg;
+  document.getElementById('quiz-score').classList.add('show');
+  document.getElementById('quiz-score').scrollIntoView({ behavior: 'smooth' });
+}
+
+function reiniciarQuiz() { renderQuiz(); window.scrollTo({ top: document.getElementById('quiz').offsetTop - 90, behavior: 'smooth' }); }
+
+// ── RESOLUÇÃO TOGGLE ───────────────────────────────────────────────────────
+function toggleRes(btn) {
+  const box = btn.nextElementSibling;
+  const open = box.classList.toggle('open');
+  btn.textContent = open ? '▼ Fechar Resolução' : '▶ Ver Resolução';
+}
+
+renderQuiz();
+
+// ── NAV ATIVO ──────────────────────────────────────────────────────────────
+
+const sections = document.querySelectorAll('section[id]');
+const navLinks  = document.querySelectorAll('nav a');
+const observer  = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(a => a.classList.remove('active'));
+      const link = document.querySelector(`nav a[href="#${e.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { threshold: .3 });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

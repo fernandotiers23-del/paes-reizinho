@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O Reizinho do PAES — Thiago Tiers</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── Hero ── */
+    .hero {
+      background: var(--navy);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0; bottom: 0;
+      width: 45%;
+      background: linear-gradient(135deg, #1B2A4A 0%, #0D1B2A 100%);
+      clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 600px;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: var(--red);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.3rem 1rem;
+      border-radius: 50px;
+      letter-spacing: 1px;
+      margin-bottom: 1.2rem;
+    }
+    .hero-crown {
+      font-size: 4rem;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+    }
+    .hero h2 {
+      font-size: 1.4rem;
+      color: #fff;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+    }
+    .hero p {
+      color: var(--gray);
+      font-size: 1rem;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+      max-width: 480px;
+    }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid #1B2A4A;
+      flex-wrap: wrap;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat-num { font-size: 2rem; font-weight: 900; color: var(--gold); display: block; }
+    .hero-stat-label { font-size: 0.8rem; color: var(--gray); letter-spacing: 0.5px; }
+
+    /* ── Features ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+    .feature-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.8rem 1.5rem;
+      box-shadow: var(--shadow);
+      border-top: 4px solid var(--gold);
+      transition: transform 0.2s;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .feature-card:hover { transform: translateY(-6px); }
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .feature-card h3 { font-size: 1.1rem; color: var(--navy); margin-bottom: 0.5rem; font-weight: 900; }
+    .feature-card p { font-size: 0.9rem; color: var(--gray); line-height: 1.6; }
+    .feature-card .feature-link {
+      display: inline-block;
+      margin-top: 1rem;
+      color: var(--gold2);
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    /* ── Como funciona ── */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .step {
+      background: #fff;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      text-align: center;
+      position: relative;
+    }
+    .step-num {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--navy);
+      color: var(--gold);
+      font-size: 1.2rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+    }
+    .step h4 { font-size: 1rem; color: var(--navy); margin-bottom: 0.4rem; font-weight: 700; }
+    .step p { font-size: 0.88rem; color: var(--gray); line-height: 1.5; }
+
+    /* ── Assuntos destaque ── */
+    .assuntos-preview {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .assunto-card {
+      border-radius: 10px;
+      padding: 1.5rem;
+      color: #fff;
+    }
+    .assunto-card h4 { font-size: 1rem; font-weight: 900; margin-bottom: 0.8rem; }
+    .assunto-card ul { list-style: none; }
+    .assunto-card ul li { font-size: 0.88rem; padding: 0.2rem 0; opacity: 0.9; }
+    .assunto-card ul li::before { content: "✦ "; color: var(--gold); }
+
+    /* ── CTA final ── */
+    .cta-section {
+      background: var(--navy);
+      padding: 5rem 0;
+      text-align: center;
+    }
+    .cta-section h2 { font-size: 2.2rem; font-weight: 900; color: var(--gold); margin-bottom: 1rem; }
+    .cta-section p { color: var(--gray); font-size: 1rem; max-width: 500px; margin: 0 auto 2rem; line-height: 1.7; }
+    .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    @media (max-width: 768px) {
+      .hero::before { display: none; }
+      .assuntos-preview { grid-template-columns: 1fr; }
+      .hero-stats { gap: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="index.html" class="navbar-brand">
+    <span class="crown">♛</span>
+    O Reizinho do PAES
+  </a>
+  <button class="hamburger" onclick="document.querySelector('.navbar-nav').classList.toggle('open')">☰</button>
+  <ul class="navbar-nav">
+    <li><a href="index.html" class="active">Início</a></li>
+    <li><a href="simulado.html">Simulados</a></li>
+    <li><a href="provas.html">Provas Anteriores</a></li>
+    <li><a href="assuntos.html">Assuntos</a></li>
+    <li><a href="simulado.html" class="btn btn-gold btn-sm">Fazer Simulado</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <span class="hero-badge">PAES UEMA — 60 QUESTÕES</span>
+      <div class="hero-crown">♛</div>
+      <h1>O REIZINHO<br>DO PAES</h1>
+      <h2>Thiago Tiers</h2>
+      <p>Simulados completos no estilo PAES UEMA, provas anteriores, correção com desvio padrão e os assuntos que mais caem. Tudo que você precisa para passar!</p>
+      <div class="hero-btns">
+        <a href="simulado.html" class="btn btn-gold btn-lg">♛ Fazer Simulado Agora</a>
+        <a href="provas.html" class="btn btn-navy btn-lg">📂 Ver Provas Antigas</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-num">60</span>
+          <span class="hero-stat-label">Questões por Prova</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">10+</span>
+          <span class="hero-stat-label">Provas Anteriores</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">4</span>
+          <span class="hero-stat-label">Áreas do Conhecimento</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">2h30</span>
+          <span class="hero-stat-label">Duração da Prova</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section bg-light">
+  <div class="container">
+    <div class="title-bar">
+      <h2 class="section-title">O que você encontra aqui</h2>
+    </div>
+    <div class="features-grid">
+      <a href="simulado.html" class="feature-card">
+        <span class="feature-icon">🎯</span>
+        <h3>Simulado Completo</h3>
+        <p>60 questões no estilo PAES UEMA com cronômetro de 2h30min. Resultado imediato ao final com análise completa.</p>
+        <span class="feature-link">Fazer simulado →</span>
+      </a>
+      <a href="resultado.html" class="feature-card" style="border-top-color:var(--blue)">
+        <span class="feature-icon">📐</span>
+        <h3>Correção com Desvio Padrão</h3>
+        <p>Veja sua nota normalizada com a fórmula Nota = 500 + 100×[(NB−X̄)/σ], igual ao sistema oficial do PAES.</p>
+        <span class="feature-link" style="color:var(--blue)">Ver como funciona →</span>
+      </a>
+      <a href="provas.html" class="feature-card" style="border-top-color:var(--green)">
+        <span class="feature-icon">📂</span>
+        <h3>Provas Anteriores</h3>
+        <p>Acesse cadernos de questões, gabaritos oficiais e resoluções comentadas dos PAES de 2015 a 2024.</p>
+        <span class="feature-link" style="color:var(--green)">Acessar provas →</span>
+      </a>
+      <a href="assuntos.html" class="feature-card" style="border-top-color:var(--red)">
+        <span class="feature-icon">📖</span>
+        <h3>Assuntos que Mais Caem</h3>
+        <p>Lista completa dos temas mais cobrados por disciplina, com dicas de estudo e peso de cada assunto no PAES.</p>
+        <span class="feature-link" style="color:var(--red)">Ver assuntos →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA O SIMULADO -->
+<section class="section">
+  <div class="container">
+    <div class="title-bar">
+      <h2 class="section-title">Como funciona o <span>Simulado</span></h2>
+    </div>
+    <p class="section-subtitle">Em 5 passos simples você realiza um simulado completo e vê seu desempenho em tempo real.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h4>Acesse o Simulado</h4>
+        <p>Clique em "Fazer Simulado" e o cronômetro de 2h30min inicia automaticamente.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h4>Responda as 60 Questões</h4>
+        <p>Navegue livremente entre as questões. Um painel mostra quais já foram respondidas.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h4>Envie suas Respostas</h4>
+        <p>Quando terminar, clique em "Encerrar Simulado". Suas respostas são registradas automaticamente.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h4>Veja o Resultado</h4>
+        <p>Receba sua nota normalizada, posição no ranking e desempenho detalhado por área.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">05</div>
+        <h4>Estude os Erros</h4>
+        <p>Acesse a resolução comentada de cada questão e identifique onde melhorar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DESVIO PADRÃO -->
+<section class="section" style="background:var(--navy);color:#fff">
+  <div class="container">
+    <div class="title-bar">
+      <h2 class="section-title" style="color:#fff">Entenda a <span>Correção</span></h2>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center">
+      <div>
+        <p style="color:var(--gray);line-height:1.8;margin-bottom:1.5rem">
+          O PAES UEMA usa um sistema de pontuação que considera não apenas o número de acertos,
+          mas também o desempenho geral de todos os candidatos. Isso é feito através da normalização
+          pelo <strong style="color:var(--gold)">desvio padrão</strong>.
+        </p>
+        <div style="background:#1B2A4A;border-radius:10px;padding:1.5rem;border-left:4px solid var(--gold)">
+          <div style="font-family:Consolas,monospace;font-size:1.1rem;color:var(--gold);margin-bottom:1rem">
+            Nota = 500 + 100 × [(NB − X̄) / σ]
+          </div>
+          <ul style="list-style:none;color:var(--gray);font-size:0.9rem;line-height:2">
+            <li><strong style="color:#fff">NB</strong> = Número de acertos do candidato</li>
+            <li><strong style="color:#fff">X̄</strong> = Média geral dos candidatos</li>
+            <li><strong style="color:#fff">σ</strong> = Desvio padrão da turma</li>
+            <li><strong style="color:#fff">500</strong> = Nota base (ponto médio)</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <h4 style="color:var(--gold);margin-bottom:1rem;font-size:1rem">Tabela de Classificação:</h4>
+        ${[
+          ['≥ 650', 'Excelente — Está no topo!', '#27AE60'],
+          ['600 a 649', 'Ótimo — Bem acima da média', '#1565C0'],
+          ['500 a 599', 'Na Média — Zona de atenção', '#E6A817'],
+          ['400 a 499', 'Abaixo da Média — Melhore!', '#E67E22'],
+          ['< 400', 'Zona Crítica — Reforce os estudos', '#C0392B']
+        ].map(([r, l, c]) => `
+          <div style="display:flex;align-items:center;gap:1rem;padding:0.6rem 0;border-bottom:1px solid #1B2A4A">
+            <span style="font-family:Consolas;font-size:0.85rem;color:${c};min-width:80px">${r}</span>
+            <span style="font-size:0.9rem;color:var(--gray)">${l}</span>
+          </div>`).join('')}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ASSUNTOS QUE MAIS CAEM -->
+<section class="section bg-light">
+  <div class="container">
+    <div class="title-bar">
+      <h2 class="section-title">Assuntos que <span>Mais Caem</span></h2>
+    </div>
+    <div class="assuntos-preview">
+      <div class="assunto-card" style="background:var(--blue)">
+        <h4>📝 Linguagens e Códigos</h4>
+        <ul>
+          <li>Interpretação de Texto</li>
+          <li>Figuras de Linguagem</li>
+          <li>Movimentos Literários</li>
+          <li>Concordância Verbal e Nominal</li>
+          <li>Inglês — Compreensão Leitora</li>
+        </ul>
+      </div>
+      <div class="assunto-card" style="background:var(--purple)">
+        <h4>🌍 Ciências Humanas</h4>
+        <ul>
+          <li>Brasil República e Era Vargas</li>
+          <li>Ditadura Militar / AI-5</li>
+          <li>Biomas Brasileiros / Maranhão</li>
+          <li>Urbanização Brasileira</li>
+          <li>Filosofia Grega e Iluminismo</li>
+        </ul>
+      </div>
+      <div class="assunto-card" style="background:var(--green)">
+        <h4>🔬 Ciências da Natureza</h4>
+        <ul>
+          <li>Genética Mendeliana</li>
+          <li>Cadeias Alimentares / Ecologia</li>
+          <li>Leis de Newton</li>
+          <li>Ligações Químicas</li>
+          <li>Fotossíntese e Respiração</li>
+        </ul>
+      </div>
+      <div class="assunto-card" style="background:var(--red)">
+        <h4>📐 Matemática</h4>
+        <ul>
+          <li>Funções Quadráticas</li>
+          <li>Trigonometria</li>
+          <li>Probabilidade</li>
+          <li>Progressões A e G</li>
+          <li>Geometria Plana e Espacial</li>
+        </ul>
+      </div>
+    </div>
+    <div class="text-center mt-4">
+      <a href="assuntos.html" class="btn btn-navy btn-lg">Ver lista completa dos assuntos →</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-section">
+  <div class="container">
+    <div style="font-size:3rem;margin-bottom:1rem">♛</div>
+    <h2>Pronto para reinar no PAES?</h2>
+    <p>Comece agora com o simulado completo de 60 questões e descubra onde você está!</p>
+    <div class="cta-btns">
+      <a href="simulado.html" class="btn btn-gold btn-lg">🎯 Fazer Simulado Agora</a>
+      <a href="provas.html" class="btn btn-navy btn-lg">📂 Provas Anteriores</a>
+    </div>
+  </div>
+</section>
+
+<!-- BOTÃO WHATSAPP FLUTUANTE -->
+<div class="wpp-float">
+  <span class="wpp-label">💬 Mentoria PAES</span>
+  <a class="wpp-float-btn" href="https://wa.me/5598983025879?text=Olá%20Thiago!%20Quero%20saber%20mais%20sobre%20a%20Mentoria%20PAES%20UEMA%20🎯" target="_blank" rel="noopener">
+    <span class="wpp-icon">📱</span> Falar com Thiago
+  </a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:2rem">
+      <div>
+        <div class="footer-brand">♛ O Reizinho do PAES</div>
+        <p style="color:var(--gray);font-size:0.9rem;max-width:300px;line-height:1.6;margin-top:0.5rem">
+          Material de preparação para o PAES UEMA — Processo Seletivo da Universidade Estadual do Maranhão.
+        </p>
+      </div>
+      <div>
+        <strong style="color:var(--gold);font-size:0.9rem">LINKS RÁPIDOS</strong>
+        <div class="footer-links" style="flex-direction:column;gap:0.5rem;margin-top:0.75rem">
+          <a href="simulado.html">Simulado PAES</a>
+          <a href="resultado.html">Meu Resultado</a>
+          <a href="provas.html">Provas Anteriores</a>
+          <a href="assuntos.html">Assuntos que Caem</a>
+          <a href="https://wa.me/5598983025879?text=Olá%20Thiago!%20Quero%20saber%20mais%20sobre%20a%20Mentoria%20PAES%20UEMA%20🎯" target="_blank" rel="noopener" style="color:#25D366">📱 WhatsApp Mentoria</a>
+        </div>
+      </div>
+      <div>
+        <strong style="color:var(--gold);font-size:0.9rem">O PAES UEMA</strong>
+        <div style="color:var(--gray);font-size:0.88rem;margin-top:0.75rem;line-height:2">
+          <div>60 questões objetivas</div>
+          <div>4 áreas do conhecimento</div>
+          <div>Duração: 2h30min</div>
+          <div>Anual — UEMA Maranhão</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-wpp">
+        <div class="footer-wpp-texto">
+          <strong>📱 Mentoria Particular com Thiago Tiers</strong>
+          <span>Quer acelerar sua aprovação? Fale direto no WhatsApp!</span>
+        </div>
+        <a class="footer-wpp-btn" href="https://wa.me/5598983025879?text=Olá%20Thiago!%20Quero%20saber%20mais%20sobre%20a%20Mentoria%20PAES%20UEMA%20🎯" target="_blank" rel="noopener">
+          💬 (98) 98302-5879
+        </a>
+      </div>
+    <div class="footer-bottom">
+      <span style="color:var(--gold)">♛</span> Thiago Tiers — O Reizinho do PAES UEMA &nbsp;|&nbsp; Material educacional para preparação ao vestibular
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
